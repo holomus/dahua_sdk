@@ -1,0 +1,14 @@
+// Person operations
+--------------------------------------------------
+person add            | single operation
+person update		  | single operation
+person get   		  | bulk operation
+person remove		  | bulk operation
+
+
+// Face operations
+--------------------------------------------------
+face add          | single operation
+face update		  | single operation
+face get   		  | bulk operation
+face remove		  | bulk operation
