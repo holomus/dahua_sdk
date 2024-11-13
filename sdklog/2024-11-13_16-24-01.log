@@ -1,0 +1,54 @@
+Begin Time:2024-11-13T16:24:01.274
+[2024-11-13T16:24:01.274 info Netsdk:69989 14400:27436 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T16:24:01.278 info Netsdk:69989 14400:27436 AVNetSDKMgr.cpp:549]avnetsdk module handle: 0000020610CB0000
+
+[2024-11-13T16:24:01.278 info Netsdk:69989 14400:27436 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T16:24:01.282 info Netsdk:69989 14400:27436 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=00000205C6FC0050, dwUser=0000000000000000].
+[2024-11-13T16:24:01.282 info Netsdk:69989 14400:27436 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T16:24:01.282 info Netsdk:69989 14400:27436 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T16:24:01.283 info Netsdk:69989 14400:27436 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T16:24:01.284 info Netsdk:69989 14400:27436 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T16:24:01.284 info Netsdk:69989 14400:27436 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T16:24:01.285 info Netsdk:69989 14400:27436 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=00000205C6FC0090, dwUserData=0000000000000000.]
+[2024-11-13T16:24:01.285 info Netsdk:69989 14400:27436 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=264601376.]
+[2024-11-13T16:24:05.156 info Netsdk:69989 14400:6892 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52646
+[2024-11-13T16:24:08.016 error Netsdk:69989 14400:8304 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:0
+[2024-11-13T16:24:08.017 error Netsdk:69989 14400:8304 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 52646
+[2024-11-13T16:24:08.017 error Netsdk:69989 14400:8304 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:52646
+[2024-11-13T16:24:08.020 info Netsdk:69989 14400:6892 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52648
+[2024-11-13T16:24:08.230 info Netsdk:69989 14400:25584 Manager.cpp:1844]Device ip 192.168.40.109, port 52648, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T16:24:08.252 info Netsdk:69989 14400:25584 netsdk.cpp:991]Enter CLIENT_LoginWithHighLevelSecurity. pstInParam:000002060DFF4100, pstOutParam:000002060F792A60.
+[2024-11-13T16:24:08.252 info Netsdk:69989 14400:25584 netsdk.cpp:1007]IP:192.168.40.109, port:52648, SpeCap:2, CapParam:000002060F8714F0, TLSCap:0
+[2024-11-13T16:24:08.252 info Netsdk:69989 14400:25584 devprob.cpp:4167]try_connect_autoregdev: Login to Device is 000002060FCD3250 ip is 192.168.40.109, port is 52648
+[2024-11-13T16:24:08.432 info Netsdk:69989 14400:25584 netsdk.cpp:1054]Leave CLIENT_LoginWithHighLevelSecurity. error:0, login ID:000002060FCD3250.
+[2024-11-13T16:24:08.443 error Netsdk:69989 14400:8304 JsonParser.cpp:6322]result : false, error code : 0x10070002
+[2024-11-13T16:24:47.918 error Netsdk:69989 14400:8304 TPIOCPMultiplexer.cpp:119]receive data result, GetQueuedCompletionStatus error:121
+[2024-11-13T16:24:47.918 error Netsdk:69989 14400:8304 TPObject.cpp:111]Receive error, ret:-1, err:10054
+[2024-11-13T16:24:47.918 error Netsdk:69989 14400:8304 TPTCPClient.cpp:272]Receive to iocp error
+[2024-11-13T16:24:47.918 error Netsdk:69989 14400:8304 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 52648
+[2024-11-13T16:24:47.918 error Netsdk:69989 14400:8304 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:52648
+[2024-11-13T16:24:47.918 info Netsdk:69989 14400:17556 Manager.cpp:1481]000002060FCD3250 Disconnect call back,192.168.40.109:52648
+[2024-11-13T16:25:42.201 info Netsdk:69989 14400:6892 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52652
+[2024-11-13T16:25:51.213 error Netsdk:69989 14400:8304 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:10054
+[2024-11-13T16:25:51.213 error Netsdk:69989 14400:8304 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 52652
+[2024-11-13T16:25:51.213 error Netsdk:69989 14400:8304 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:52652
+[2024-11-13T16:25:51.219 info Netsdk:69989 14400:6892 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52654
+[2024-11-13T16:25:51.434 info Netsdk:69989 14400:25584 Manager.cpp:1844]Device ip 192.168.40.109, port 52654, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T16:25:51.438 info Netsdk:69989 14400:25584 netsdk.cpp:991]Enter CLIENT_LoginWithHighLevelSecurity. pstInParam:000002060F6F3A90, pstOutParam:000002060F718720.
+[2024-11-13T16:25:51.438 info Netsdk:69989 14400:25584 netsdk.cpp:1007]IP:192.168.40.109, port:52654, SpeCap:2, CapParam:000002060F7A3C80, TLSCap:0
+[2024-11-13T16:25:51.439 info Netsdk:69989 14400:25584 devprob.cpp:4167]try_connect_autoregdev: Login to Device is 000002060FCE81D0 ip is 192.168.40.109, port is 52654
+[2024-11-13T16:25:51.579 info Netsdk:69989 14400:25584 netsdk.cpp:1054]Leave CLIENT_LoginWithHighLevelSecurity. error:0, login ID:000002060FCE81D0.
+[2024-11-13T16:25:51.602 error Netsdk:69989 14400:10068 JsonParser.cpp:6322]result : false, error code : 0x10070002
+[2024-11-13T16:29:27.841 error Netsdk:69989 14400:10068 TPIOCPMultiplexer.cpp:119]receive data result, GetQueuedCompletionStatus error:121
+[2024-11-13T16:29:27.841 error Netsdk:69989 14400:10068 TPObject.cpp:111]Receive error, ret:-1, err:10054
+[2024-11-13T16:29:27.841 error Netsdk:69989 14400:10068 TPTCPClient.cpp:272]Receive to iocp error
+[2024-11-13T16:29:27.841 error Netsdk:69989 14400:10068 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 52654
+[2024-11-13T16:29:27.841 error Netsdk:69989 14400:10068 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:52654
+[2024-11-13T16:29:27.841 info Netsdk:69989 14400:17556 Manager.cpp:1481]000002060FCE81D0 Disconnect call back,192.168.40.109:52654
+[2024-11-13T16:30:21.145 info Netsdk:69989 14400:6892 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52660
+[2024-11-13T16:30:21.345 info Netsdk:69989 14400:25584 Manager.cpp:1844]Device ip 192.168.40.109, port 52660, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T16:30:21.349 info Netsdk:69989 14400:25584 netsdk.cpp:991]Enter CLIENT_LoginWithHighLevelSecurity. pstInParam:000002060F3665E0, pstOutParam:000002060F8C26A0.
+[2024-11-13T16:30:21.349 info Netsdk:69989 14400:25584 netsdk.cpp:1007]IP:192.168.40.109, port:52660, SpeCap:2, CapParam:000002060EA897C0, TLSCap:0
+[2024-11-13T16:30:21.349 info Netsdk:69989 14400:25584 devprob.cpp:4167]try_connect_autoregdev: Login to Device is 000002060FCE81D0 ip is 192.168.40.109, port is 52660
+[2024-11-13T16:30:21.489 info Netsdk:69989 14400:25584 netsdk.cpp:1054]Leave CLIENT_LoginWithHighLevelSecurity. error:0, login ID:000002060FCE81D0.
+[2024-11-13T16:30:21.521 error Netsdk:69989 14400:10068 JsonParser.cpp:6322]result : false, error code : 0x10070002

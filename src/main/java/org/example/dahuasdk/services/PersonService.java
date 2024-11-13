@@ -19,10 +19,10 @@ public class PersonService {
 
 
     private List<Integer> getFailCodes(NetSDKLib.FAIL_CODE[] failCodes) {
-        List<Integer> result = new ArrayList<>(failCodes.length);
+        List<Integer> result = new ArrayList<>();
 
         for (int i = 0; i < failCodes.length; i ++) {
-            result.set(i, failCodes[i].nFailCode);
+            result.add(i, failCodes[i].nFailCode);
         }
 
         return result;

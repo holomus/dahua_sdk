@@ -1,0 +1,117 @@
+Begin Time:2024-11-13T17:29:41.010
+[2024-11-13T17:29:41.010 info Netsdk:69989 12668:25936 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T17:29:41.014 info Netsdk:69989 12668:25936 AVNetSDKMgr.cpp:549]avnetsdk module handle: 000001DEEE110000
+
+[2024-11-13T17:29:41.014 info Netsdk:69989 12668:25936 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T17:29:41.017 info Netsdk:69989 12668:25936 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=000001DEEC030050, dwUser=0000000000000000].
+[2024-11-13T17:29:41.018 info Netsdk:69989 12668:25936 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T17:29:41.018 info Netsdk:69989 12668:25936 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T17:29:41.018 info Netsdk:69989 12668:25936 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T17:29:41.019 info Netsdk:69989 12668:25936 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T17:29:41.019 info Netsdk:69989 12668:25936 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T17:29:41.020 info Netsdk:69989 12668:25936 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=000001DEEC030090, dwUserData=0000000000000000.]
+[2024-11-13T17:29:41.021 info Netsdk:69989 12668:25936 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=-334397664.]
+[2024-11-13T17:29:43.385 info Netsdk:69989 12668:24568 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52766
+[2024-11-13T17:29:43.586 info Netsdk:69989 12668:15152 Manager.cpp:1844]Device ip 192.168.40.109, port 52766, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T17:29:43.607 info Netsdk:69989 12668:15152 netsdk.cpp:991]Enter CLIENT_LoginWithHighLevelSecurity. pstInParam:000001DEECC76B20, pstOutParam:000001DEEB4CB2E0.
+[2024-11-13T17:29:43.607 info Netsdk:69989 12668:15152 netsdk.cpp:1007]IP:192.168.40.109, port:52766, SpeCap:2, CapParam:000001DEECC6BAF0, TLSCap:0
+[2024-11-13T17:29:43.607 info Netsdk:69989 12668:15152 devprob.cpp:4167]try_connect_autoregdev: Login to Device is 000001DEEC193250 ip is 192.168.40.109, port is 52766
+[2024-11-13T17:29:43.729 info Netsdk:69989 12668:15152 netsdk.cpp:1054]Leave CLIENT_LoginWithHighLevelSecurity. error:0, login ID:000001DEEC193250.
+[2024-11-13T17:29:43.741 error Netsdk:69989 12668:27436 JsonParser.cpp:6322]result : false, error code : 0x10070002
+[2024-11-13T17:30:51.371 info Netsdk:69989 12668:5208 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:30:51.540 info Netsdk:69989 12668:5208 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:31:55.253 info Netsdk:69989 12668:24636 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:31:55.294 error Netsdk:69989 12668:24636 JsonParser.cpp:6322]result : false, error code : 0x10030110
+[2024-11-13T17:31:55.294 info Netsdk:69989 12668:24636 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:0.
+[2024-11-13T17:31:55.295 info Netsdk:69989 12668:24636 netsdk.cpp:8224]Enter CLIENT_GetLastError.
+[2024-11-13T17:31:55.295 info Netsdk:69989 12668:24636 netsdk.cpp:8227]Leave CLIENT_GetLastError.[Error code=800004b5.]
+[2024-11-13T17:31:55.295 info Netsdk:69989 12668:24636 netsdk.cpp:8224]Enter CLIENT_GetLastError.
+[2024-11-13T17:31:55.295 info Netsdk:69989 12668:24636 netsdk.cpp:8227]Leave CLIENT_GetLastError.[Error code=800004b5.]
+[2024-11-13T17:37:49.815 info Netsdk:69989 12668:26600 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:37:49.831 info Netsdk:69989 12668:26600 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:38:36.990 info Netsdk:69989 12668:26600 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:38:36.990 info Netsdk:69989 12668:27548 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:38:37.018 info Netsdk:69989 12668:26600 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:38:37.018 error Netsdk:69989 12668:27548 JsonParser.cpp:6322]result : false, error code : 0x10030110
+[2024-11-13T17:38:37.018 info Netsdk:69989 12668:27548 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:0.
+[2024-11-13T17:38:37.389 info Netsdk:69989 12668:26600 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:38:37.401 info Netsdk:69989 12668:27548 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:38:37.608 info Netsdk:69989 12668:26600 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:1.
+[2024-11-13T17:38:37.616 info Netsdk:69989 12668:27548 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:1.
+[2024-11-13T17:39:37.120 info Netsdk:69989 12668:3092 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:39:37.156 info Netsdk:69989 12668:3092 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:39:51.463 info Netsdk:69989 12668:3092 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:39:51.463 info Netsdk:69989 12668:9908 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:39:51.464 info Netsdk:69989 12668:27548 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:39:51.488 info Netsdk:69989 12668:27548 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:39:51.488 info Netsdk:69989 12668:9908 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:39:51.517 info Netsdk:69989 12668:3092 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:40:04.121 info Netsdk:69989 12668:26396 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:40:04.152 info Netsdk:69989 12668:26396 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:40:04.371 info Netsdk:69989 12668:25572 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:40:04.643 info Netsdk:69989 12668:25572 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:1.
+[2024-11-13T17:45:25.473 info Netsdk:69989 12668:16404 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.474 info Netsdk:69989 12668:24832 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.476 info Netsdk:69989 12668:26976 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.477 info Netsdk:69989 12668:14892 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.477 info Netsdk:69989 12668:12108 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.480 info Netsdk:69989 12668:19984 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.482 info Netsdk:69989 12668:26940 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.486 info Netsdk:69989 12668:24764 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.511 info Netsdk:69989 12668:16404 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.523 info Netsdk:69989 12668:16404 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:45:25.527 info Netsdk:69989 12668:24832 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.527 info Netsdk:69989 12668:26940 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.528 info Netsdk:69989 12668:26976 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.528 info Netsdk:69989 12668:12108 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.529 info Netsdk:69989 12668:24764 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.531 info Netsdk:69989 12668:14892 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.532 info Netsdk:69989 12668:19984 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:25.569 info Netsdk:69989 12668:16404 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:56.851 info Netsdk:69989 12668:12108 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:45:56.852 info Netsdk:69989 12668:16404 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:45:56.854 info Netsdk:69989 12668:14892 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:45:56.892 info Netsdk:69989 12668:14892 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:56.896 info Netsdk:69989 12668:16404 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:45:56.897 error Netsdk:69989 12668:12108 JsonParser.cpp:6322]result : false, error code : 0x10030110
+[2024-11-13T17:45:56.897 info Netsdk:69989 12668:12108 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:0.
+[2024-11-13T17:45:57.099 info Netsdk:69989 12668:12108 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:45:57.387 info Netsdk:69989 12668:12108 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:1.
+[2024-11-13T17:46:13.840 info Netsdk:69989 12668:12108 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=0, nWaitTime=3000]
+[2024-11-13T17:46:13.864 info Netsdk:69989 12668:12108 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:46:14.066 info Netsdk:69989 12668:12108 netsdk.cpp:35165]Enter CLIENT_OperateAccessFaceService. [lLoginID=000001DEEC193250, type=2, nWaitTime=5000]
+[2024-11-13T17:46:14.361 info Netsdk:69989 12668:12108 netsdk.cpp:35190]Leave CLIENT_OperateAccessFaceService.ret:1.
+[2024-11-13T17:47:35.652 info Netsdk:69989 12668:26976 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:47:35.653 info Netsdk:69989 12668:12108 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:47:35.653 info Netsdk:69989 12668:24832 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:47:35.653 info Netsdk:69989 12668:26940 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:47:35.653 info Netsdk:69989 12668:24764 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T17:47:35.684 info Netsdk:69989 12668:26976 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:47:35.684 info Netsdk:69989 12668:24832 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:47:35.699 info Netsdk:69989 12668:12108 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:47:35.699 info Netsdk:69989 12668:24764 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T17:47:35.699 info Netsdk:69989 12668:26940 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.176 info Netsdk:69989 12668:9228 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.178 info Netsdk:69989 12668:2228 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.178 info Netsdk:69989 12668:25588 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.178 info Netsdk:69989 12668:10888 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.178 info Netsdk:69989 12668:2440 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.179 info Netsdk:69989 12668:23384 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.181 info Netsdk:69989 12668:14060 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.187 info Netsdk:69989 12668:9616 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.199 info Netsdk:69989 12668:2228 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.207 info Netsdk:69989 12668:2228 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.210 info Netsdk:69989 12668:25588 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.211 info Netsdk:69989 12668:2440 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.218 info Netsdk:69989 12668:9228 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.221 info Netsdk:69989 12668:25588 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.221 info Netsdk:69989 12668:9228 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.223 info Netsdk:69989 12668:2440 netsdk.cpp:34889]Enter CLIENT_OperateAccessUserService. [lLoginID=000001DEEC193250, type=2, nWaitTime=3000]
+[2024-11-13T18:07:00.235 info Netsdk:69989 12668:9616 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.235 info Netsdk:69989 12668:23384 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.235 info Netsdk:69989 12668:10888 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.237 info Netsdk:69989 12668:14060 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.240 info Netsdk:69989 12668:9228 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.284 info Netsdk:69989 12668:2440 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.287 info Netsdk:69989 12668:25588 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.
+[2024-11-13T18:07:00.296 info Netsdk:69989 12668:2228 netsdk.cpp:34907]Leave CLIENT_OperateAccessUserService.ret:1.

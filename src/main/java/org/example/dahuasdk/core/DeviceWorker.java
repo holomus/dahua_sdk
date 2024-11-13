@@ -1,13 +1,9 @@
 package org.example.dahuasdk.core;
 
-import com.netsdk.lib.NetSDKLib;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.client.vhr.entity.load.Commands;
-import org.example.dahuasdk.dao.AppDAO;
-import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,44 +19,28 @@ public class DeviceWorker implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(DeviceWorker.class);
     private final MiddlewareEngine middlewareEngine;
     private final VHRClient vhrClient;
-    private final AppDAO appDAO;
     private final CommandExecutor commandExecutor;
 
     private Middleware middleware;
-    private long deviceId;
+    private long deviceVhrId;
 
     @Override
     public void run() {
         try {
-            Device device = appDAO.findDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceId);
-//
-            NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
-                    device.getLogin(),
-                    device.getPassword(),
-                    device.getDeviceId()
-            );
-
             commandExecutor.setMiddleware(middleware);
-            commandExecutor.setDeviceId(deviceId);
-            commandExecutor.setLoginHandle(loginHandle);
+            commandExecutor.setDeviceVhrId(deviceVhrId);
 
-            long count = 10;
-            while (true && count > 0) {
-                // load commands from VHR
-                Commands commands = vhrClient.loadCommands(middleware, deviceId);
+            while (true) {
+                Commands commands = vhrClient.loadCommands(middleware, deviceVhrId);
 
-                // execute commands, return if failed
                 if (!commandExecutor.executeCommands(commands)) {
-                    DahuaSdkApplication.autoRegisterService.logout(loginHandle);
                     return;
                 }
-                count --;
             }
-
         } catch (Exception e) {
-            log.error("Error occurred while executing commands for device, middlewareId: {}, deviceId: {}", middleware.getId(), deviceId, e);
+            log.error("Error occurred while executing commands for device, middlewareId: {}, deviceId: {}", middleware.getId(), deviceVhrId, e);
         } finally {
-            middlewareEngine.removeDeviceWorker(middleware.getId(), deviceId);
+            middlewareEngine.removeDeviceWorker(middleware.getId(), deviceVhrId);
         }
     }
 }

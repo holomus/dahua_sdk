@@ -1,0 +1,18 @@
+Begin Time:2024-11-13T14:15:41.957
+[2024-11-13T14:15:41.958 info Netsdk:69989 1372:20424 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T14:15:41.962 info Netsdk:69989 1372:20424 AVNetSDKMgr.cpp:549]avnetsdk module handle: 00000235983C0000
+
+[2024-11-13T14:15:41.962 info Netsdk:69989 1372:20424 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T14:15:41.967 info Netsdk:69989 1372:20424 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=0000000000000000, dwUser=0000000000000000].
+[2024-11-13T14:15:41.967 info Netsdk:69989 1372:20424 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T14:15:41.967 info Netsdk:69989 1372:20424 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T14:15:41.967 info Netsdk:69989 1372:20424 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T14:15:41.971 info Netsdk:69989 1372:20424 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T14:15:41.971 info Netsdk:69989 1372:20424 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T14:15:41.976 info Netsdk:69989 1372:20424 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=0000000000000000, dwUserData=0000000000000000.]
+[2024-11-13T14:15:41.976 error Netsdk:69989 1372:20424 Manager.cpp:14035]invaild param,port is 9500, cbListen is 0000000000000000
+[2024-11-13T14:15:41.976 info Netsdk:69989 1372:20424 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=0.]
+[2024-11-13T14:15:41.979 info Netsdk:69989 1372:20424 netsdk.cpp:8224]Enter CLIENT_GetLastError.
+[2024-11-13T14:15:41.979 info Netsdk:69989 1372:20424 netsdk.cpp:8227]Leave CLIENT_GetLastError.[Error code=80000007.]
+[2024-11-13T14:15:41.979 info Netsdk:69989 1372:20424 netsdk.cpp:8224]Enter CLIENT_GetLastError.
+[2024-11-13T14:15:41.979 info Netsdk:69989 1372:20424 netsdk.cpp:8227]Leave CLIENT_GetLastError.[Error code=80000007.]

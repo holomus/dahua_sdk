@@ -1,0 +1,75 @@
+Begin Time:2024-11-13T11:11:25.924
+[2024-11-13T11:11:25.924 info Netsdk:69989 26808:26584 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T11:11:25.929 info Netsdk:69989 26808:26584 AVNetSDKMgr.cpp:549]avnetsdk module handle: 000001A142880000
+
+[2024-11-13T11:11:25.929 info Netsdk:69989 26808:26584 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T11:11:25.936 info Netsdk:69989 26808:26584 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=000001A142010050, dwUser=0000000000000000].
+[2024-11-13T11:11:25.936 info Netsdk:69989 26808:26584 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T11:11:25.936 info Netsdk:69989 26808:26584 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T11:11:25.936 info Netsdk:69989 26808:26584 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T11:11:25.941 info Netsdk:69989 26808:26584 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T11:11:25.941 info Netsdk:69989 26808:26584 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T11:11:25.944 info Netsdk:69989 26808:26584 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=000001A142010090, dwUserData=0000000000000000.]
+[2024-11-13T11:11:25.946 info Netsdk:69989 26808:26584 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=2062254032.]
+[2024-11-13T11:11:27.224 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49488
+[2024-11-13T11:11:30.114 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:0
+[2024-11-13T11:11:30.114 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49488
+[2024-11-13T11:11:30.114 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49488
+[2024-11-13T11:11:30.118 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49490
+[2024-11-13T11:11:30.324 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49490, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:12:30.444 info Netsdk:69989 26808:4144 Manager.cpp:8591]AutoRegister connect more than 60 sec whitout login ,CloseConn ip : 192.168.40.109, port : 21185 
+[2024-11-13T11:12:50.336 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49494
+[2024-11-13T11:12:50.537 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49494, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:13:20.589 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49494, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:13:50.567 info Netsdk:69989 26808:4144 Manager.cpp:8591]AutoRegister connect more than 60 sec whitout login ,CloseConn ip : 192.168.40.109, port : 22209 
+[2024-11-13T11:14:30.373 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49498
+[2024-11-13T11:14:30.582 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49498, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:15:00.772 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49498, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:15:30.009 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:15:30.010 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49498
+[2024-11-13T11:15:30.010 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49498
+[2024-11-13T11:15:30.209 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49500
+[2024-11-13T11:15:30.411 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49500, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:16:00.482 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49500, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:16:30.029 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:16:30.029 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49500
+[2024-11-13T11:16:30.029 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49500
+[2024-11-13T11:16:30.124 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49504
+[2024-11-13T11:16:30.331 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49504, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:17:00.391 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49504, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:17:30.074 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:17:30.074 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49504
+[2024-11-13T11:17:30.074 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49504
+[2024-11-13T11:17:30.242 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49506
+[2024-11-13T11:17:30.445 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49506, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:18:00.487 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49506, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:18:30.133 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:18:30.133 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49506
+[2024-11-13T11:18:30.133 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49506
+[2024-11-13T11:18:30.338 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49510
+[2024-11-13T11:18:30.539 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49510, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:19:00.562 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49510, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:19:30.141 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:19:30.141 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49510
+[2024-11-13T11:19:30.141 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49510
+[2024-11-13T11:19:30.245 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49512
+[2024-11-13T11:19:30.445 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49512, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:20:00.510 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49512, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:20:30.122 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:20:30.122 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49512
+[2024-11-13T11:20:30.122 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49512
+[2024-11-13T11:20:30.151 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49516
+[2024-11-13T11:20:30.357 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49516, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:21:00.388 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49516, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:21:30.122 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:21:30.122 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49516
+[2024-11-13T11:21:30.122 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49516
+[2024-11-13T11:21:30.201 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49518
+[2024-11-13T11:21:30.406 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49518, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:22:00.412 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49518, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:22:30.132 error Netsdk:69989 26808:17704 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T11:22:30.132 error Netsdk:69989 26808:17704 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 49518
+[2024-11-13T11:22:30.132 error Netsdk:69989 26808:17704 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:49518
+[2024-11-13T11:22:30.261 info Netsdk:69989 26808:10136 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:49522
+[2024-11-13T11:22:30.467 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49522, connectID is 0, chn is 0, serial is verifix405, registed
+[2024-11-13T11:23:00.496 info Netsdk:69989 26808:27096 Manager.cpp:1844]Device ip 192.168.40.109, port 49522, connectID is 0, chn is 0, serial is verifix405, registed

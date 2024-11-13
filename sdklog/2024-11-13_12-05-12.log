@@ -1,0 +1,25 @@
+Begin Time:2024-11-13T12:05:12.136
+[2024-11-13T12:05:12.137 info Netsdk:69989 21140:16156 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T12:05:12.143 info Netsdk:69989 21140:16156 AVNetSDKMgr.cpp:549]avnetsdk module handle: 0000022C0CAF0000
+
+[2024-11-13T12:05:12.143 info Netsdk:69989 21140:16156 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T12:05:12.151 info Netsdk:69989 21140:16156 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=0000022BAF850050, dwUser=0000000000000000].
+[2024-11-13T12:05:12.151 info Netsdk:69989 21140:16156 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T12:05:12.151 info Netsdk:69989 21140:16156 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T12:05:12.152 info Netsdk:69989 21140:16156 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T12:05:12.156 info Netsdk:69989 21140:16156 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T12:05:12.156 info Netsdk:69989 21140:16156 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T12:05:12.159 info Netsdk:69989 21140:16156 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=0000022BAF850090, dwUserData=0000000000000000.]
+[2024-11-13T12:05:12.159 info Netsdk:69989 21140:16156 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=178943792.]
+[2024-11-13T12:05:13.449 info Netsdk:69989 21140:19480 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:50008
+[2024-11-13T12:05:20.334 error Netsdk:69989 21140:12584 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:0
+[2024-11-13T12:05:20.334 error Netsdk:69989 21140:12584 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 50008
+[2024-11-13T12:05:20.334 error Netsdk:69989 21140:12584 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:50008
+[2024-11-13T12:05:20.339 info Netsdk:69989 21140:19480 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:50010
+[2024-11-13T12:05:20.547 info Netsdk:69989 21140:10236 Manager.cpp:1844]Device ip 192.168.40.109, port 50010, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T12:05:50.611 info Netsdk:69989 21140:10236 Manager.cpp:1844]Device ip 192.168.40.109, port 50010, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T12:06:20.140 error Netsdk:69989 21140:12584 TPIOCPMultiplexer.cpp:161]iocp disconnected by remote host or something:GetLastError:997
+[2024-11-13T12:06:20.140 error Netsdk:69989 21140:12584 TPTCPClient.cpp:314]Disconnect, ip:192.168.40.109, port is 50010
+[2024-11-13T12:06:20.140 error Netsdk:69989 21140:12584 TcpSocket.cpp:578]Disconnect, ip:192.168.40.109, port:50010
+[2024-11-13T12:06:20.261 info Netsdk:69989 21140:19480 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:50012
+[2024-11-13T12:06:20.463 info Netsdk:69989 21140:10236 Manager.cpp:1844]Device ip 192.168.40.109, port 50012, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed

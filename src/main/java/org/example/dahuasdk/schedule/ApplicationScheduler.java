@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.*;
+import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.client.dahua.DahuaClient;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.config.VhrProperties;
 import org.example.dahuasdk.dao.AppDAO;
+import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -74,6 +77,15 @@ public class ApplicationScheduler {
     private DeviceStatuses prepareDeviceStatuses(List<Device> deviceStatuses, Middleware middleware) {
         List<Device> devices = dao.findAllDevicesByMiddlewareId(middleware.getId());
         DeviceStatuses devicesInfo = new DeviceStatuses();
+        HashMap<String, DeviceConnectionDTO> deviceConnectionInfo = DahuaSdkApplication.autoRegisterService.deviceConnectionInfo;
+
+        for (Device device : devices) {
+            devicesInfo.addDeviceInfo(device.getVhrDeviceId(),
+                    deviceConnectionInfo.containsKey(
+                            device.getDeviceId())
+                            ? deviceConnectionInfo.get(device.getDeviceId()).getStatus()
+                            : "U");
+        }
 
         return devicesInfo;
     }

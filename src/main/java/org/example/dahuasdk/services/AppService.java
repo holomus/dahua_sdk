@@ -33,4 +33,5 @@ public interface AppService {
     void deleteDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId);
 
     Device findDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId);
+    Device findDeviceByDeviceId(String deviceId);
 }

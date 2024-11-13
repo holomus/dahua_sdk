@@ -43,6 +43,6 @@ public class VhrProperties {
     }
 
     public String middlewareRequestHeaderName() {
-        return middlewareRequestHeaderName == null || middlewareRequestHeaderName.isBlank() ? "vhr-gateway" : middlewareRequestHeaderName;
+        return middlewareRequestHeaderName == null || middlewareRequestHeaderName.isBlank() ? "middleware_token" : middlewareRequestHeaderName;
     }
 }

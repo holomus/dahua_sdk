@@ -20,4 +20,6 @@ public interface AppDAO {
     void deleteDeviceById(long id);
     void deleteDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId);
     Device findDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId);
+    boolean existsDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId);
+    Device findDeviceByDeviceId(String deviceId);
 }

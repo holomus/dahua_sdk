@@ -1,16 +1,20 @@
 package org.example.dahuasdk.core;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netsdk.lib.NetSDKLib;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.client.vhr.entity.load.*;
 import org.example.dahuasdk.client.vhr.entity.save.CommandResult;
 import org.example.dahuasdk.client.vhr.entity.save.CommandResultData;
 import org.example.dahuasdk.client.vhr.entity.save.CommandsResult;
+import org.example.dahuasdk.dao.AppDAO;
+import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
 import org.example.dahuasdk.services.AppService;
 import org.example.dahuasdk.services.PersonService;
@@ -35,7 +39,8 @@ public class CommandExecutor {
     private PersonService personService = new PersonService();
     private NetSDKLib.LLong loginHandle;
     private Middleware middleware;
-    private long deviceId;
+    private final AppDAO appDAO;
+    private long deviceVhrId;
 
     @PostConstruct
     public void init() {
@@ -50,12 +55,24 @@ public class CommandExecutor {
     public boolean executeCommands(Commands commands) {
         if (commands.getCommands() == null || commands.getCommands().isEmpty()) return false;
 
+        if (appDAO.existsDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceVhrId)) {
+            Device device = appDAO.findDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceVhrId);
+
+            loginHandle = DahuaSdkApplication
+                    .autoRegisterService
+                    .deviceConnectionInfo
+                    .get(device.getDeviceId())
+                    .getLoginHandle();
+        }
+
         executeCommandsConcurrently(commands.getCommands());
         return true;
     }
 
     public CommandResult executeCommand(Command command) {
         List<Integer> failcodes = new ArrayList<>();
+
+        System.out.println("\ncommandCode = " + command.getCommandCode() + '\n');
 
         switch (command.getCommandCode()) {
             case "dahua:device:set_up":
@@ -124,7 +141,7 @@ public class CommandExecutor {
 
         try {
             appService.createDevice(
-                    deviceId,
+                    deviceVhrId,
                     middleware.getId(),
                     device.getLogin(),
                     device.getPassword(),
@@ -132,15 +149,15 @@ public class CommandExecutor {
                     device.getDeviceName()
             );
         } catch (Exception e) {
-            log.error("Error occurred while adding device to middleware, middlewareId: {}, deviceId: {}", middleware.getId(), deviceId, e);
+            log.error("Error occurred while adding device to middleware, middlewareId: {}, deviceId: {}", middleware.getId(), deviceVhrId, e);
         }
     }
 
     private void removeDevice() {
         try {
-            appService.deleteDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceId);
+            appService.deleteDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceVhrId);
         } catch (Exception e) {
-            log.error("Error occurred while removing device from middleware, middlewareId: {}, deviceId: {}", middleware.getId(), deviceId, e);
+            log.error("Error occurred while removing device from middleware, middlewareId: {}, deviceId: {}", middleware.getId(), deviceVhrId, e);
         }
     }
 
@@ -156,11 +173,14 @@ public class CommandExecutor {
         return new ArrayList<>();
     }
 
+    private record UserId(@JsonProperty("user_id") String user_id){
+    }
+
     private List<Integer> removePerson(Object commandBody) {
-        String[] userIds = objectMapper.convertValue(commandBody, String[].class);
+        UserId userId = objectMapper.convertValue(commandBody, UserId.class);
 
         try {
-            return personService.removePerson(userIds, loginHandle);
+            return personService.removePerson(new String[]{userId.user_id}, loginHandle);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

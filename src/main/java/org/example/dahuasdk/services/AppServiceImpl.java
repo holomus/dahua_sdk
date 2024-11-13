@@ -100,4 +100,9 @@ public class AppServiceImpl implements AppService {
     public Device findDeviceByMiddlewareIdAndVhrId(long middlewareId, long vhrId) {
         return dao.findDeviceByMiddlewareIdAndVhrId(middlewareId, vhrId);
     }
+
+    @Override
+    public Device findDeviceByDeviceId(String deviceId) {
+        return dao.findDeviceByDeviceId(deviceId);
+    }
 }

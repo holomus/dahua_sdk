@@ -1,0 +1,20 @@
+Begin Time:2024-11-13T17:04:17.289
+[2024-11-13T17:04:17.289 info Netsdk:69989 20544:5212 AVNetSDKMgr.cpp:504]Load avnetsdk library dynamically
+[2024-11-13T17:04:17.293 info Netsdk:69989 20544:5212 AVNetSDKMgr.cpp:549]avnetsdk module handle: 0000014E7A360000
+
+[2024-11-13T17:04:17.293 info Netsdk:69989 20544:5212 AVNetSDKMgr.cpp:823]Load configsdk dynamically
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:302]Enter CLIENT_SetAutoReconnect:[cbAutoConnect=0000014E30FE0050, dwUser=0000000000000000].
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:304]Leave CLIENT_SetAutoReconnect.
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:326]Enter CLIENT_SetConnectTime:[nWaitTime=5000, nTryTimes=1].
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:339]Leave CLIENT_SetConnectTime.
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:352]Enter CLIENT_SetNetworkParam:[nWaittime=0, nConnectTime=10000, nConnectTryNum=0, nSubConnectSpaceTime=0, nGetDevInfoTime=3000, nConnectBufSize=0, nGetConnInfoTime=3000, nSearchRecordTime=0, nsubDisconnetTime=0, byNetType=0, byPlaybackBufSize=0, bDetectDisconnTime=0, bKeepLifeInterval=0, nPicBufSize=0].
+[2024-11-13T17:04:17.297 info Netsdk:69989 20544:5212 netsdk.cpp:367]Leave CLIENT_SetNetworkParam.
+[2024-11-13T17:04:17.300 info Netsdk:69989 20544:5212 netsdk.cpp:8375]Enter CLIENT_ListenServer. [ip=192.168.50.227, port=9500, nTimeout=1000, cbListen=0000014E30FE0090, dwUserData=0000000000000000.]
+[2024-11-13T17:04:17.300 info Netsdk:69989 20544:5212 netsdk.cpp:8379]Leave CLIENT_ListenServer.[ret=2017050944.]
+[2024-11-13T17:04:17.847 info Netsdk:69989 20544:27020 TcpListenSocket.cpp:104]DoAccept DealNewSocket Get Ip and Port is 192.168.40.109:52716
+[2024-11-13T17:04:18.053 info Netsdk:69989 20544:5776 Manager.cpp:1844]Device ip 192.168.40.109, port 52716, connectID is 0, chn is 0, serial is C492DF5C47424A389569270C71667CCE, registed
+[2024-11-13T17:04:18.073 info Netsdk:69989 20544:5776 netsdk.cpp:991]Enter CLIENT_LoginWithHighLevelSecurity. pstInParam:0000014E78D869A0, pstOutParam:0000014E774B6F20.
+[2024-11-13T17:04:18.073 info Netsdk:69989 20544:5776 netsdk.cpp:1007]IP:192.168.40.109, port:52716, SpeCap:2, CapParam:0000014E78C61680, TLSCap:0
+[2024-11-13T17:04:18.074 info Netsdk:69989 20544:5776 devprob.cpp:4167]try_connect_autoregdev: Login to Device is 0000014E783B2F50 ip is 192.168.40.109, port is 52716
+[2024-11-13T17:04:18.209 info Netsdk:69989 20544:5776 netsdk.cpp:1054]Leave CLIENT_LoginWithHighLevelSecurity. error:0, login ID:0000014E783B2F50.
+[2024-11-13T17:04:18.228 error Netsdk:69989 20544:26484 JsonParser.cpp:6322]result : false, error code : 0x10070002

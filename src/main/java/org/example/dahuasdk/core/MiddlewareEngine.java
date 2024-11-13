@@ -57,7 +57,7 @@ public class MiddlewareEngine {
             // Start DeviceWorker
             DeviceWorker deviceWorker = context.getBean(DeviceWorker.class);
             deviceWorker.setMiddleware(middleware);
-            deviceWorker.setDeviceId(deviceId);
+            deviceWorker.setDeviceVhrId(deviceId);
 
             deviceExecutorService.submit(deviceWorker);
         } catch (Exception e) {

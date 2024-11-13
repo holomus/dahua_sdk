@@ -97,4 +97,24 @@ public class AppDAOImpl implements AppDAO {
 
         return query.getSingleResult();
     }
+
+    @Override
+    public boolean existsDeviceByMiddlewareIdAndVhrId (long middlewareId, long vhrDeviceId) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(d) FROM Device d WHERE d.middleware.id = :middlewareId AND d.vhrDeviceId = :vhrDeviceId", Long.class
+        );
+        query.setParameter("middlewareId", middlewareId);
+        query.setParameter("vhrDeviceId", vhrDeviceId);
+
+        Long count = query.getSingleResult();
+        return count != null && count > 0;
+    }
+
+    @Override
+    public Device findDeviceByDeviceId(String deviceId) {
+        TypedQuery<Device> query = entityManager.createQuery("FROM Device WHERE deviceId = :deviceId", Device.class);
+        query.setParameter("deviceId", deviceId);
+
+        return query.getSingleResult();
+    }
 }
