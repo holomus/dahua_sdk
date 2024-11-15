@@ -22,7 +22,7 @@ public class EventReceiverService {
         NetSDKLib.LLong eventListenerHandle = netSDKInstance.CLIENT_RealLoadPictureEx(loginHandle, channelId, NetSDKLib.EVENT_IVS_ALL,
                 bNeedPicture, new AnalyzerDataCB(deviceId, eventProcessor), null, null);
         if(eventListenerHandle.longValue() != 0) {
-            log.debug("CLIENT_RealLoadPictureEx Success. DeviceId: {}, ChannelId : {}", deviceId, channelId);
+            log.info("CLIENT_RealLoadPictureEx Success. DeviceId: {}, ChannelId : {}", deviceId, channelId);
         } else {
             log.error("CLIENT_RealLoadPictureEx Failed! Error Code: {}", ToolKits.getErrorCodePrint());
             return null;
@@ -32,17 +32,11 @@ public class EventReceiverService {
     }
 
     public NetSDKLib.LLong eventListeningStart(NetSDKLib netSDKInstance, NetSDKLib.LLong loginHandle, String deviceId) {
-        int channelId = -1; // All channels
+        int channelId = 0; // All channels
         NetSDKLib.LLong eventListenerHandle = null;
 
         try {
             eventListenerHandle = eventListeningStart(netSDKInstance, channelId, loginHandle, deviceId);
-
-            if (eventListenerHandle == null) {
-                channelId = 0; // First channel
-
-                eventListenerHandle = eventListeningStart(netSDKInstance, channelId, loginHandle, deviceId);
-            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -88,7 +82,9 @@ public class EventReceiverService {
                 //     e2.printStackTrace();
                 // }
 
-                var event = new EventDTO(msg, this.deviceId);
+                var event = new EventDTO(msg, deviceId);
+
+                log.info("Received event for deviceID: {}, eventTime: {}, personCode: {}, eventCode: {}", event.getDeviceId(), event.getUTCEventTime(), event.getPersonCode(), event.getEventCode());
 
                 eventProcessor.processEvent(event);
             } catch (Exception ex) {

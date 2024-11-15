@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,8 @@ public class EventLoaderService {
             NetSDKLib netSDKInstance,
             NetSDKLib.LLong loginHandle,
             String deviceId,
-            int eventStartLoadUTCTime,
-            int eventEndLoadUTCTime
+            int eventStartUnixTimestamp,
+            int eventEndUnixTimestamp
     ) {
         List<EventDTO> eventDTOList = new ArrayList<>();
 
@@ -33,8 +35,8 @@ public class EventLoaderService {
         try {
             NetSDKLib.FIND_RECORD_ACCESSCTLCARDREC_CONDITION_EX recordCondition = new NetSDKLib.FIND_RECORD_ACCESSCTLCARDREC_CONDITION_EX();
             recordCondition.bRealUTCTimeEnable = 1;
-            recordCondition.nStartRealUTCTime = eventStartLoadUTCTime;
-            recordCondition.nEndRealUTCTime = eventEndLoadUTCTime;
+            recordCondition.nStartRealUTCTime = eventStartUnixTimestamp;
+            recordCondition.nEndRealUTCTime = eventEndUnixTimestamp;
 
             NetSDKLib.NET_IN_FIND_RECORD_PARAM stuFindInParam = new NetSDKLib.NET_IN_FIND_RECORD_PARAM();
             stuFindInParam.emType = NetSDKLib.EM_NET_RECORD_TYPE.NET_RECORD_ACCESSCTLCARDREC_EX;
@@ -102,11 +104,14 @@ public class EventLoaderService {
         NetSDKLib netSDKInstance,
         NetSDKLib.LLong loginHandle,
         String deviceId,
-        int eventStartLoadUTCTime,
-        int eventEndLoadUTCTime
+        LocalDateTime eventStartLoadTime,
+        LocalDateTime eventEndLoadTime
     ) {
         try {
-            var events = findAccessRecords(netSDKInstance, loginHandle, deviceId, eventStartLoadUTCTime, eventEndLoadUTCTime);
+            if (eventStartLoadTime == null) return;
+            int eventStartUnixTimestamp = Math.toIntExact(eventStartLoadTime.toEpochSecond(ZoneOffset.UTC));
+            int eventEndUnixTimestamp = Math.toIntExact(eventEndLoadTime.toEpochSecond(ZoneOffset.UTC));
+            var events = findAccessRecords(netSDKInstance, loginHandle, deviceId, eventStartUnixTimestamp, eventEndUnixTimestamp);
             eventProcessor.processEvents(events, deviceId);
         } catch (Exception ex) {
             log.error(ex.getMessage());

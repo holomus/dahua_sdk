@@ -1,7 +1,10 @@
 package org.example.dahuasdk.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.netsdk.lib.NetSDKLib;
 import lombok.*;
+import org.example.dahuasdk.serializers.UnixTimestampSerializer;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 public class EventDTO {
     private String deviceId;
+    @JsonSerialize(using = UnixTimestampSerializer.class)
     private LocalDateTime UTCEventTime;
     private int eventCode;
     private String personCode;

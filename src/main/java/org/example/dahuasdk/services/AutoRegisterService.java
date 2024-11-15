@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.swing.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class AutoRegisterService {
     private final AppService appService;
     private final AppDAO dao;
     private final EventReceiverService eventReceiver;
+    private final EventLoaderService eventLoader;
 
     private class DisConnect implements NetSDKLib.fDisConnect {
         public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
@@ -74,33 +76,40 @@ public class AutoRegisterService {
                 }
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_SERIAL_RETURN: {
                     String finalDeviceId = deviceId;
+
+                    Device device = appService.findDeviceByDeviceId(finalDeviceId);
+
+                    var lastOnlineTime = device.getLastOnlineTime();
+
+                    NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
+                            device.getLogin(),
+                            device.getPassword(),
+                            device.getDeviceId(),
+                            pIp.trim(),
+                            wPort
+                    );
+
+                    System.out.println("ip = " + pIp.trim() + " port + " + wPort + " device_id = " + finalDeviceId + "loginhandle = " + loginHandle);
+
+                    DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
+                    deviceInfo.setLoginHandle(loginHandle);
+
+                    deviceInfo.setStatus("O");
+                    device.setLastOnlineTime(LocalDateTime.now());
+                    dao.saveDevice(device);
+
+                    deviceConnectionInfo.put(finalDeviceId, deviceInfo);
+
                     new SwingWorker<Boolean, String>() {
                         @Override
                         protected Boolean doInBackground() {
-                            Device device = appService.findDeviceByDeviceId(finalDeviceId);
 
-                            NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
-                                    device.getLogin(),
-                                    device.getPassword(),
-                                    device.getDeviceId(),
-                                    pIp.trim(),
-                                    wPort
-                            );
-
-                            System.out.println("ip = " + pIp.trim() + " port + " + wPort + " device_id = " + finalDeviceId + "loginhandle = " + loginHandle);
-
-                            DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
-                            deviceInfo.setLoginHandle(loginHandle);
-
-                            deviceInfo.setStatus("O");
-                            device.setLastOnlineTime(new Date());
-                            dao.saveDevice(device);
-
-                            deviceConnectionInfo.put(finalDeviceId, deviceInfo);
                             System.out.println("Connected");
 
                             NetSDKLib.LLong eventListenHandle = eventReceiver.eventListeningStart(netsdk, loginHandle, finalDeviceId);
-                            
+
+                            eventLoader.loadAccessRecords(netsdk, loginHandle, finalDeviceId, lastOnlineTime, LocalDateTime.now());
+
                             return true;
                         }
 

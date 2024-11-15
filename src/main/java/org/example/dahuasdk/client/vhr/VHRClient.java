@@ -175,10 +175,7 @@ public class VHRClient {
 
     public void sendEvents(Middleware middleware, List<EventDTO> events) {
         try {
-            Map<String, Object> bodyMap = new HashMap<>();
-            bodyMap.put("middleware", Map.of("token", middleware.getToken()));
-
-            RequestBody body = createRequestBody(bodyMap);
+            RequestBody body = createRequestBody(events);
 
             Request request = new Request.Builder()
                     .url(properties.saveDeviceEventsUri(middleware.getHost()))
