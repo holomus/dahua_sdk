@@ -190,14 +190,12 @@ public class VHRClient {
             try (Response response = vhrHttpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
                     assert response.body() != null;
-                    // TODO: add better log message
                     log.warn("Send device event request to VHR failed. middlewareId: {}, host: {}, code: {}, message: {}",
                             middleware.getId(), middleware.getHost(), response.code(), response.body().string());
                 }
             }
         } catch (Exception e) {
-            // TODO: add better log message
-            log.error("Error occurred while making health check request to VHR. middlewareId: {}, host: {}", middleware.getId(), middleware.getHost(), e);
+            log.error("Error occurred while sending events to VHR. middlewareId: {}, host: {}", middleware.getId(), middleware.getHost(), e);
         }
     }
 }
