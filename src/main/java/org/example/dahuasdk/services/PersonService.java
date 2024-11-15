@@ -3,10 +3,11 @@ package org.example.dahuasdk.services;
 import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import jakarta.persistence.TemporalType;
 import lombok.RequiredArgsConstructor;
 import org.example.dahuasdk.client.vhr.entity.load.PersonDTO;
 import org.example.dahuasdk.client.vhr.entity.load.PersonFaceUpdateDto;
-import org.example.dahuasdk.dto.PersonInfoDto;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,11 +18,10 @@ import java.util.*;
 public class PersonService {
     final private NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
 
-
     private List<Integer> getFailCodes(NetSDKLib.FAIL_CODE[] failCodes) {
         List<Integer> result = new ArrayList<>();
 
-        for (int i = 0; i < failCodes.length; i ++) {
+        for (int i = 0; i < failCodes.length; i++) {
             result.add(i, failCodes[i].nFailCode);
         }
 
@@ -45,9 +45,9 @@ public class PersonService {
 
             System.arraycopy(personInsertInfo.getUserId().getBytes(), 0, personInfo.szUserID, 0,
                     personInsertInfo.getUserId().getBytes().length);
-            personInfo.szName = new byte[100];
             System.arraycopy(personInsertInfo.getName().getBytes(), 0, personInfo.szName, 0,
                     personInsertInfo.getName().getBytes().length);
+
             personInfo.emUserType = personInsertInfo.getUserType();
             personInfo.nUserStatus = personInsertInfo.getUserStatus();
 
@@ -55,7 +55,7 @@ public class PersonService {
             calendar.setTime(personInsertInfo.getStuValidBeginTime());
             personInfo.stuValidBeginTime.setTime(
                     calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.MONTH) + 1,
                     calendar.get(Calendar.DAY_OF_MONTH),
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
@@ -65,7 +65,7 @@ public class PersonService {
             personInfo.stuValidEndTime = new NetSDKLib.NET_TIME();
             personInfo.stuValidEndTime.setTime(
                     calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.MONTH) + 1,
                     calendar.get(Calendar.DAY_OF_MONTH),
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
@@ -171,100 +171,12 @@ public class PersonService {
         return getFailCodes(failCodes);
     }
 
-//    public List<PersonInfoDto> getPerson(
-//            String[] userIDs,
-//            AutoRegisterService autoRegisterService
-//    )  {
-//        NetSDKLib.LLong loginHandle = autoRegisterService.login(
-//                autoRegisterService.gpIp,
-//                autoRegisterService.gwPort,
-//                "admin",
-//                "verifix1234",
-//                autoRegisterService.gfinalDeviceId
-//        );
-//
-//        int nMaxNum = userIDs.length;
-//        int emtype = NetSDKLib.NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_GET;
-//
-//        NetSDKLib.NET_ACCESS_USER_INFO[] users = new NetSDKLib.NET_ACCESS_USER_INFO[nMaxNum];
-//        NetSDKLib.FAIL_CODE[] failCodes = new NetSDKLib.FAIL_CODE[nMaxNum];
-//
-//        for (int i = 0; i < nMaxNum; i++) {
-//            users[i] = new NetSDKLib.NET_ACCESS_USER_INFO();
-//            failCodes[i] = new NetSDKLib.FAIL_CODE();
-//        }
-//
-//        NetSDKLib.NET_IN_ACCESS_USER_SERVICE_GET stIn = new NetSDKLib.NET_IN_ACCESS_USER_SERVICE_GET();
-//        stIn.nUserNum = userIDs.length;
-//
-//        for (int i = 0; i < userIDs.length; i++) {
-//            System.arraycopy(userIDs[i].getBytes(),
-//                    0,
-//                    stIn.szUserIDs[i].szUserID,
-//                    0,
-//                    userIDs[i].getBytes().length);
-//        }
-//
-//        NetSDKLib.NET_OUT_ACCESS_USER_SERVICE_GET stOut = new NetSDKLib.NET_OUT_ACCESS_USER_SERVICE_GET();
-//        stOut.nMaxRetNum = nMaxNum;
-//        stOut.pUserInfo = new Memory((long) users[0].size() * nMaxNum);
-//        stOut.pUserInfo.clear((long) users[0].size() * nMaxNum);
-//        stOut.pFailCode = new Memory((long) failCodes[0].size() * nMaxNum);
-//        stOut.pFailCode.clear((long) failCodes[0].size() * nMaxNum);
-//
-//        ToolKits.SetStructArrToPointerData(users, stOut.pUserInfo);
-//        ToolKits.SetStructArrToPointerData(failCodes, stOut.pFailCode);
-//
-//        stIn.write();
-//        stOut.write();
-//
-//        System.out.println("(removePerson) loginHandle = " + loginHandle);
-//
-//
-//        boolean result = netsdk.CLIENT_OperateAccessUserService(
-//                loginHandle,
-//                emtype,
-//                stIn.getPointer(),
-//                stOut.getPointer(),
-//                3000
-//        );
-//
-//        autoRegisterService.logout(loginHandle);
-//
-//        List<PersonInfoDto> personInfoDtos = new ArrayList<>();
-//
-//        if (result) {
-//            ToolKits.GetPointerDataToStructArr(stOut.pUserInfo, users);
-//            ToolKits.GetPointerDataToStructArr(stOut.pFailCode, failCodes);
-//
-//            for (int i = 0; i < nMaxNum; i++) {
-//                NetSDKLib.NET_ACCESS_USER_INFO info = users[i];
-//                PersonInfoDto personInfoDto = new PersonInfoDto();
-//
-//                personInfoDto.setUserId(new String(info.szUserID, java.nio.charset.StandardCharsets.UTF_8));
-//                personInfoDto.setName(new String(info.szName, java.nio.charset.StandardCharsets.UTF_8));
-//                personInfoDto.setUserType(info.emUserType);
-//                personInfoDto.setUserStatus(info.nUserStatus);
-//                personInfoDto.setStuValidBeginTime(convertToDate(info.stuValidBeginTime));
-//                personInfoDto.setStuValidEndTime(convertToDate(info.stuValidEndTime));
-//
-//                personInfoDtos.add(personInfoDto);
-//            }
-//        } else {
-//            System.err.println("Failed to get user.");
-//            System.err.println("Failed to search for the users, " + ToolKits.getErrorCodeShow());
-//        }
-//
-//        return personInfoDtos;
-//    }
-//
-
-    public List<Integer> savePersonFace(
+    public List<Integer> insertPersonFace(
             List<PersonFaceUpdateDto> personFaceUpdateDtos,
-            NetSDKLib.LLong loginHandle
-    ) {
+            NetSDKLib.LLong loginHandle,
+            int emtype
+    ) throws Exception {
         PersonFaceUpdateDto personFaceDto;
-        int emtype = NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE;
         int nMaxNum = personFaceUpdateDtos.size();
 
         NetSDKLib.NET_ACCESS_FACE_INFO[] faceInfos = new NetSDKLib.NET_ACCESS_FACE_INFO[nMaxNum];
@@ -275,7 +187,7 @@ public class PersonService {
             personFaceDto = personFaceUpdateDtos.get(i);
 
             String userId = personFaceDto.getUserId();
-            List<byte[]> imageDatas =  List.of(personFaceDto.getFaceImage());
+            List<byte[]> imageDatas = List.of(personFaceDto.getFaceImage());
             int nFacePhoto = imageDatas.size();
 
             faceInfo.nFacePhoto = nFacePhoto;
@@ -303,6 +215,10 @@ public class PersonService {
                     calendar.get(Calendar.MINUTE),
                     calendar.get(Calendar.SECOND)
             );
+
+            Memory memory = new Memory(faceInfo.size());
+            faceInfo.write();
+            memory.write(0, faceInfo.getPointer().getByteArray(0, faceInfo.size()), 0, faceInfo.size());
 
             faceInfos[i] = faceInfo;
         }
@@ -342,7 +258,8 @@ public class PersonService {
         ToolKits.GetPointerDataToStructArr(faceInsertOut.pFailCode, failCodes);
 
         if (!ret) {
-            System.out.println("Add face failed: " + ToolKits.getErrorCodePrint());
+            System.err.println("Add face failed: " + ToolKits.getErrorCodeShow());
+            throw new Exception("Add face failed. Message = " + ToolKits.getErrorCodeShow());
         }
 
         System.out.println("Add face succeeded");
@@ -350,7 +267,7 @@ public class PersonService {
         return getFailCodes(failCodes);
     }
 
-    public boolean removeFace(
+    public boolean removePersonFace(
             String[] userIDs,
             NetSDKLib.LLong loginHandle
     ) {
@@ -372,7 +289,6 @@ public class PersonService {
                     0,
                     userIDs[i].getBytes().length);
         }
-
 
         NetSDKLib.NET_OUT_ACCESS_FACE_SERVICE_REMOVE stOut = new NetSDKLib.NET_OUT_ACCESS_FACE_SERVICE_REMOVE();
         stOut.nMaxRetNum = nMaxNum;
@@ -400,18 +316,5 @@ public class PersonService {
             System.out.println("Remove face succeeded");
             return true;
         }
-    }
-
-    public static Date convertToDate(NetSDKLib.NET_TIME netTime) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, netTime.dwYear);
-        calendar.set(Calendar.MONTH, netTime.dwMonth); // Oy 0 dan boshlanadi
-        calendar.set(Calendar.DAY_OF_MONTH, netTime.dwDay);
-        calendar.set(Calendar.HOUR_OF_DAY, netTime.dwHour);
-        calendar.set(Calendar.MINUTE, netTime.dwMinute);
-        calendar.set(Calendar.SECOND, netTime.dwSecond);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
     }
 }

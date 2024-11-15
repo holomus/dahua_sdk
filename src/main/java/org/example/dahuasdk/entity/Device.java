@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -32,6 +34,9 @@ public class Device {
 
     @Column(name = "device_name")
     private String deviceName;
+
+    @Column(name = "last_online_time")
+    private Date lastOnlineTime;
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "middleware_id", updatable = false)

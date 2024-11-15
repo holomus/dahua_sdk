@@ -22,7 +22,7 @@ public class CommandResultData {
     private List<Integer> failCodes;
 
     @JsonProperty("fail_messages")
-    private List<Integer> failMessages;
+    private List<String> failMessages;
 
     @JsonIgnore
     public boolean isPossibleInternalOrDeviceBusyError() {

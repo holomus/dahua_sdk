@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -70,35 +71,85 @@ public class CommandExecutor {
     }
 
     public CommandResult executeCommand(Command command) {
-        List<Integer> failcodes = new ArrayList<>();
+        try {
+            List<Integer> failcodes = new ArrayList<>();
 
-        System.out.println("\ncommandCode = " + command.getCommandCode() + '\n');
+            System.out.println("\ncommandCode = " + command.getCommandCode() + '\n');
 
-        switch (command.getCommandCode()) {
-            case "dahua:device:set_up":
-                addDevice(command.getCommandBody());
-                break;
-            case "dahua:device:remove":
-                removeDevice();
-                break;
-            case "dahua:person:set_up":
-                failcodes = addPerson(command.getCommandBody());
-                break;
-            case "dahua:person:remove":
-                failcodes = removePerson(command.getCommandBody());
-                break;
-            case "dahua:person:set_photo":
-                failcodes = setPhoto(command.getCommandBody());
-                break;
-            default:
-                log.error("Invalid command code mode: {}", command.getCommandCode());
+            switch (command.getCommandCode()) {
+                case "dahua:device:set_up":
+                    addDevice(command.getCommandBody());
+                    break;
+                case "dahua:device:remove":
+                    removeDevice();
+                    break;
+                case "dahua:person:set_up":
+                    failcodes = addPerson(command.getCommandBody());
+                    break;
+                case "dahua:person:remove":
+                    failcodes = removePerson(command.getCommandBody());
+                    break;
+                case "dahua:person:set_photo":
+                    failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_INSERT);
+                    break;
+                case "dahua:person:update_photo":
+                    failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE);
+                    break;
+                default:
+                    log.error("Invalid command code mode: {}", command.getCommandCode());
+            }
+
+            return new CommandResult(command.getCommandId(), getCommandData(failcodes));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
         }
+    }
 
+    public static String getFailCodeMessage(int code) {
+        return switch (code) {
+            case 0 -> "No errors";
+            case 2 -> "Parameter error";
+            case 3 -> "Invalid password";
+            case 4 -> "Invalid message data";
+            case 5 -> "Invalid face data";
+            case 6 -> "Invalid card data";
+            case 7 -> "Invalid person data";
+            case 11 -> "Insert limit reached";
+            case 12 -> "Maximum insert speed reached";
+            case 13 -> "Failed to clear information data";
+            case 14 -> "Failed to clear face data";
+            case 15 -> "Failed to clear card data";
+            case 19 -> "Exceeded the maximum number of personal information records";
+            case 20 -> "Exceeded personal maximum number of card records";
+            case 21 -> "Maximum photo size exceeded";
+            case 22 -> "Invalid user ID (customer not found)";
+            case 24 -> "Face photo already exists";
+            case 25 -> "Maximum number of face photos exceeded";
+            case 26 -> "Invalid photo format";
+            case 27 -> "Exceeded the limit on number of administrators";
+            case 35 -> "Picture quality is too low";
+            default -> "Unknown error";
+        };
+    }
+
+    private CommandResultData getCommandData(List<Integer> failcodes) {
         CommandResultData commandResultData = new CommandResultData();
         commandResultData.setStatusCode(200);
-        commandResultData.setFailCodes(failcodes);
+        List<String> failCodeMessages = new ArrayList<>();
 
-        return new CommandResult(command.getCommandId(), commandResultData);
+        for (Integer failcode : failcodes) {
+            if (failcode != 0) {
+                commandResultData.setStatusCode(400);
+            }
+
+            failCodeMessages.add(getFailCodeMessage(failcode));
+        }
+
+        commandResultData.setFailCodes(failcodes);
+        commandResultData.setFailMessages(failCodeMessages);
+
+        return commandResultData;
     }
 
     private void executeCommandsConcurrently(List<Command> commands) {
@@ -161,8 +212,19 @@ public class CommandExecutor {
         }
     }
 
-    private List<Integer> addPerson(Object commandBody) {
+    private List<Integer> addPerson(Object commandBody) throws Exception {
+        System.out.println(commandBody + "_");
         PersonDTO person = objectMapper.convertValue(commandBody, PersonDTO.class);
+        System.out.println("done");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+        try {
+            person.setStuValidBeginTime(dateFormat.parse(person.getStuValidBeginTimeStr()));
+            person.setStuValidEndTime(dateFormat.parse(person.getStuValidEndTimeStr()));
+        } catch (Exception e) {
+            throw new Exception("Person stu valid date formats is invalid", e);
+        }
 
         try {
             return personService.savePerson(List.of(person), loginHandle);
@@ -173,7 +235,7 @@ public class CommandExecutor {
         return new ArrayList<>();
     }
 
-    private record UserId(@JsonProperty("user_id") String user_id){
+    private record UserId(@JsonProperty("user_id") String user_id) {
     }
 
     private List<Integer> removePerson(Object commandBody) {
@@ -188,7 +250,7 @@ public class CommandExecutor {
         return new ArrayList<>();
     }
 
-    private List<Integer> setPhoto(Object commandBody) {
+    private List<Integer> setPhoto(Object commandBody, int emtype) throws Exception {
         PhotoDTO photoDTO = objectMapper.convertValue(commandBody, PhotoDTO.class);
         Photo photo = vhrClient.loadPhoto(middleware, photoDTO.getFaceImage());
 
@@ -201,6 +263,6 @@ public class CommandExecutor {
 
         personFaces.add(personFaceUpdateDto);
 
-        return personService.savePersonFace(personFaces, loginHandle);
+        return personService.insertPersonFace(personFaces, loginHandle, emtype);
     }
 }

@@ -13,7 +13,7 @@ public interface AppDAO {
     Middleware findMiddlewareByToken(String token);
     void updateMiddleware(Middleware middleware);
     void deleteMiddlewareById(long id);
-    void createDevice(Device device);
+    void saveDevice(Device device);
     List<Device> findAllDevicesByMiddlewareId(long middlewareId);
     Device findDeviceById(long id);
     void updateDevice(Device device);

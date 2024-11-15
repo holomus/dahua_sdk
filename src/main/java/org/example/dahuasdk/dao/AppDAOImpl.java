@@ -2,6 +2,7 @@ package org.example.dahuasdk.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
@@ -53,8 +54,9 @@ public class AppDAOImpl implements AppDAO {
     }
 
     @Override
-    public void createDevice(Device device) {
-        entityManager.persist(device);
+    @Transactional
+    public void saveDevice(Device device) {
+        entityManager.merge(device);
     }
 
     @Override
