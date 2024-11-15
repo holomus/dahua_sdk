@@ -96,9 +96,11 @@ public class AutoRegisterService {
 
                     deviceConnectionInfo.put(deviceId, deviceInfo);
 
+                    String finalDeviceId = deviceId;
                     new SwingWorker<Boolean, String>() {
                         @Override
                         protected Boolean doInBackground() {
+                            NetSDKLib.LLong eventListenHandle = EventReceiverService.eventListeningStart(netsdk, loginHandle, finalDeviceId);
                             System.out.println("Connected");
                             return true;
                         }

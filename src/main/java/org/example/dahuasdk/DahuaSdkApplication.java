@@ -27,7 +27,7 @@ public class DahuaSdkApplication {
 
         autoRegisterService.init(autoRegisterService.disConnect, autoRegisterService.haveReConnect);
         autoRegisterService.startServer(
-                "192.168.50.227",
+                "localhost",
                 9500,
                 autoRegisterService.callback
         );
