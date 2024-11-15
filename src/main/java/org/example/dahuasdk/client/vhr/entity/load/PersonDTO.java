@@ -25,11 +25,11 @@ public class PersonDTO {
     @JsonProperty("user_status")
     private int userStatus;
 
-    @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonProperty("stu_valid_begin_time")
+    private String stuValidBeginTimeStr;
     private Date stuValidBeginTime;
 
-    @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonProperty("stu_valid_end_time")
+    private String stuValidEndTimeStr;
     private Date stuValidEndTime;
 }

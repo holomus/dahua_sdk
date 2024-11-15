@@ -11,8 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeviceConnectionDTO {
-    private String ip;
-    private int port;
     private NetSDKLib.LLong loginHandle;
     private String status;
 }

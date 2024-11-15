@@ -1,7 +1,6 @@
 package org.example.dahuasdk.services;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -15,7 +14,7 @@ public class CustomDateDeserializer extends JsonDeserializer<Date> {
 
     @Override
     public Date deserialize(JsonParser jsonParser, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         String date = jsonParser.getText();
         try {
             return dateFormat.parse(date);

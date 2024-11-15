@@ -7,6 +7,7 @@ import com.sun.jna.Pointer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dahuasdk.DahuaSdkApplication;
+import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Service;
 import javax.swing.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -23,21 +26,18 @@ import java.util.Map;
 
 public class AutoRegisterService {
     static final private NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
-    private final AppService appService ;
+    private final AppService appService;
+    private final AppDAO dao;
 
     private class DisConnect implements NetSDKLib.fDisConnect {
         public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
-            System.out.printf("Device[%s] Port[%d] DisConnect!\n", pchDVRIP, nDVRPort);
+            System.out.printf("Device[%s] Port[%d] LoginHandle[%d], DisConnect!\n", pchDVRIP, nDVRPort, m_hLoginHandle.longValue());
 
-
-            HashMap<String, Integer> map = new HashMap<>();
-
-            // for-each orqali kalit-qiymat juftliklarini aylanib chiqish
             for (Map.Entry<String, DeviceConnectionDTO> entry : deviceConnectionInfo.entrySet()) {
                 String key = entry.getKey();
                 DeviceConnectionDTO value = entry.getValue();
 
-                if (value.getIp().equals(pchDVRIP) && value.getPort() == nDVRPort) {
+                if (Objects.equals(m_hLoginHandle, value.getLoginHandle())) {
                     value.setStatus("F");
                     deviceConnectionInfo.put(key, value);
                     break;
@@ -74,34 +74,36 @@ public class AutoRegisterService {
                 }
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_SERIAL_RETURN: {
 
-                    Device device = appService.findDeviceByDeviceId(deviceId);
-
-//                    logout(deviceConnectionInfo.get(deviceId).getLoginHandle());
-
-                    NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
-                            device.getLogin(),
-                            device.getPassword(),
-                            device.getDeviceId(),
-                            pIp.trim(),
-                            wPort
-                    );
-
-                    System.out.println("ip = " + pIp.trim() + " port + " + wPort + " device_id = " + deviceId + "loginhandle = " + loginHandle);
-
-                    DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
-                    deviceInfo.setLoginHandle(loginHandle);
-                    deviceInfo.setIp(pIp.trim());
-                    deviceInfo.setPort(wPort);
-                    deviceInfo.setStatus("O");
-
-                    deviceConnectionInfo.put(deviceId, deviceInfo);
 
                     String finalDeviceId = deviceId;
                     new SwingWorker<Boolean, String>() {
                         @Override
                         protected Boolean doInBackground() {
-                            NetSDKLib.LLong eventListenHandle = EventReceiverService.eventListeningStart(netsdk, loginHandle, finalDeviceId);
+                            Device device = appService.findDeviceByDeviceId(finalDeviceId);
+
+                            NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
+                                    device.getLogin(),
+                                    device.getPassword(),
+                                    device.getDeviceId(),
+                                    pIp.trim(),
+                                    wPort
+                            );
+
+                            System.out.println("ip = " + pIp.trim() + " port + " + wPort + " device_id = " + finalDeviceId + "loginhandle = " + loginHandle);
+
+                            DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
+                            deviceInfo.setLoginHandle(loginHandle);
+
+                            deviceInfo.setStatus("O");
+                            device.setLastOnlineTime(new Date());
+                            dao.saveDevice(device);
+
+                            deviceConnectionInfo.put(finalDeviceId, deviceInfo);
                             System.out.println("Connected");
+                            
+                            
+                            NetSDKLib.LLong eventListenHandle = EventReceiverService.eventListeningStart(netsdk, loginHandle, finalDeviceId);
+                            
                             return true;
                         }
 
@@ -109,7 +111,6 @@ public class AutoRegisterService {
                         protected void done() {
                             try {
                                 if (get()) {
-
                                     System.out.println("(done) Connected");
                                 }
                             } catch (Exception e) {
@@ -131,20 +132,11 @@ public class AutoRegisterService {
     public NetSDKLib.LLong serverHanle;
     public static NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();
     public HashMap<String, DeviceConnectionDTO> deviceConnectionInfo = new HashMap<>();
-    private static boolean bInit    = false;
+    private static boolean bInit = false;
     private static boolean bLogopen = false;
     public final ServiceCB callback = new ServiceCB();
     public final DisConnect disConnect = new DisConnect();
     public final HaveReConnect haveReConnect = new HaveReConnect();
-
-//    public AutoRegisterService() {
-//        this.serverHanle = new NetSDKLib.LLong(0);
-//        this.callback = new ServiceCB();
-//        this.disConnect = new DisConnect();
-//        this.haveReConnect = new HaveReConnect();
-//        this.deviceConnectionInfo = new HashMap<>();
-//        this.appService = new AppServiceImpl();
-//    }
 
     public NetSDKLib.LLong login(
             String m_strUser,
@@ -153,7 +145,6 @@ public class AutoRegisterService {
             String m_strIp,
             int m_nPort
     ) {
-        DeviceConnectionDTO deviceConnectionDTO = deviceConnectionInfo.get(deviceIds);
         Pointer deviceId = ToolKits.GetGBKStringToPointer(deviceIds);
 
         NetSDKLib.NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY pstInParam = new NetSDKLib.NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY();
@@ -163,7 +154,7 @@ public class AutoRegisterService {
         pstInParam.szPassword = m_strPassword.getBytes();
         pstInParam.szUserName = m_strUser.getBytes();
         pstInParam.emSpecCap = 2;
-        pstInParam.pCapParam=deviceId;
+        pstInParam.pCapParam = deviceId;
 
         NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY pstOutParam = new NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY();
         pstOutParam.stuDeviceInfo = m_stDeviceInfo;
@@ -183,25 +174,25 @@ public class AutoRegisterService {
 
     public static void init(NetSDKLib.fDisConnect disConnect, NetSDKLib.fHaveReConnect haveReConnect) {
         bInit = netsdk.CLIENT_Init(disConnect, null);
-        if(!bInit) {
+        if (!bInit) {
             System.out.println("Initialize SDK failed");
             return;
         }
 
-        //打开日志，可选
         NetSDKLib.LOG_SET_PRINT_INFO setLog = new NetSDKLib.LOG_SET_PRINT_INFO();
         File path = new File("./sdklog/");
         if (!path.exists()) {
             path.mkdir();
         }
         String logPath = path.getAbsoluteFile().getParent() + "\\sdklog\\" + ToolKits.getDate() + ".log";
+
         setLog.nPrintStrategy = 0;
         setLog.bSetFilePath = 1;
         System.arraycopy(logPath.getBytes(), 0, setLog.szLogFilePath, 0, logPath.getBytes().length);
         System.out.println(logPath);
         setLog.bSetPrintStrategy = 1;
         bLogopen = netsdk.CLIENT_LogOpen(setLog);
-        if(!bLogopen ) {
+        if (!bLogopen) {
             System.err.println("Failed to open NetSDK log");
         }
 

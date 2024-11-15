@@ -68,7 +68,7 @@ public class AppServiceImpl implements AppService {
         device.setDeviceName(deviceName);
 
         device.setMiddleware(middlewareRecord);
-        dao.createDevice(device);
+        dao.saveDevice(device);
     }
 
     @Override
