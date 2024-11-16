@@ -7,7 +7,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.client.vhr.entity.load.*;
 import org.example.dahuasdk.client.vhr.entity.save.CommandResult;
@@ -17,6 +16,7 @@ import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
 import org.example.dahuasdk.services.AppService;
+import org.example.dahuasdk.services.DeviceConnectionInfoService;
 import org.example.dahuasdk.services.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,9 @@ import java.util.concurrent.*;
 @Setter
 @Component
 @Scope("prototype")
+
 public class CommandExecutor {
+    private final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     private final AppService appService;
     private final VHRClient vhrClient;
@@ -59,11 +61,7 @@ public class CommandExecutor {
         if (appDAO.existsDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceVhrId)) {
             Device device = appDAO.findDeviceByMiddlewareIdAndVhrId(middleware.getId(), deviceVhrId);
 
-            loginHandle = DahuaSdkApplication
-                    .autoRegisterService
-                    .deviceConnectionInfo
-                    .get(device.getDeviceId())
-                    .getLoginHandle();
+            loginHandle = deviceConnectionInfoService.get(device.getDeviceId()).getLoginHandle();
         }
 
         executeCommandsConcurrently(commands.getCommands());
@@ -73,8 +71,6 @@ public class CommandExecutor {
     public CommandResult executeCommand(Command command) {
         try {
             List<Integer> failcodes = new ArrayList<>();
-
-            System.out.println("\ncommandCode = " + command.getCommandCode() + '\n');
 
             switch (command.getCommandCode()) {
                 case "dahua:device:set_up":
@@ -89,10 +85,13 @@ public class CommandExecutor {
                 case "dahua:person:remove":
                     failcodes = removePerson(command.getCommandBody());
                     break;
-                case "dahua:person:set_photo":
+                case "dahua:person:add_photo":
                     failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_INSERT);
                     break;
-                case "dahua:person:update_photo":
+                case "dahua:person:edit_photo":
+                    failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE);
+                    break;
+                case "dahua:person:remove_photo":
                     failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE);
                     break;
                 default:
@@ -101,9 +100,18 @@ public class CommandExecutor {
 
             return new CommandResult(command.getCommandId(), getCommandData(failcodes));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+            log.error("Error while execute command. command_id = {}, message = {}", command.getCommandId(), e.getMessage());
+            return makeErrorResult(command.getCommandId(), e.getMessage());
         }
+    }
+
+    public CommandResult makeErrorResult(String commandId, String errorMessage) {
+        CommandResult commandResult =  new CommandResult(commandId);
+        CommandResultData commandResultData = new CommandResultData();
+        commandResultData.setStatusCode(400);
+        commandResultData.setMessage(errorMessage);
+
+        return commandResult;
     }
 
     public static String getFailCodeMessage(int code) {
@@ -173,18 +181,6 @@ public class CommandExecutor {
             log.error("Error occurred while waiting for command completion", e);
             Thread.currentThread().interrupt();
         }
-
-        List<CommandResult> failedCommandResults = new ArrayList<CommandResult>();
-
-        for (int i = 0; i < commands.size(); i++) {
-            try {
-                Future<CommandResult> future = completionService.poll(1, TimeUnit.SECONDS);
-                if (future != null && future.get() != null)
-                    failedCommandResults.add(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Error occurred while getting command result", e);
-            }
-        }
     }
 
     private void addDevice(Object commandBody) {
@@ -213,10 +209,7 @@ public class CommandExecutor {
     }
 
     private List<Integer> addPerson(Object commandBody) throws Exception {
-        System.out.println(commandBody + "_");
         PersonDTO person = objectMapper.convertValue(commandBody, PersonDTO.class);
-        System.out.println("done");
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
         try {
@@ -226,37 +219,24 @@ public class CommandExecutor {
             throw new Exception("Person stu valid date formats is invalid", e);
         }
 
-        try {
-            return personService.savePerson(List.of(person), loginHandle);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return new ArrayList<>();
+        return personService.savePerson(List.of(person), loginHandle);
     }
 
     private record UserId(@JsonProperty("user_id") String user_id) {
     }
 
-    private List<Integer> removePerson(Object commandBody) {
+    private List<Integer> removePerson(Object commandBody) throws Exception {
         UserId userId = objectMapper.convertValue(commandBody, UserId.class);
 
-        try {
-            return personService.removePerson(new String[]{userId.user_id}, loginHandle);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return new ArrayList<>();
+        return personService.removePerson(new String[]{userId.user_id}, loginHandle);
     }
 
     private List<Integer> setPhoto(Object commandBody, int emtype) throws Exception {
         PhotoDTO photoDTO = objectMapper.convertValue(commandBody, PhotoDTO.class);
         Photo photo = vhrClient.loadPhoto(middleware, photoDTO.getFaceImage());
 
-        List<PersonFaceUpdateDto> personFaces = new ArrayList<>();
-
-        PersonFaceUpdateDto personFaceUpdateDto = new PersonFaceUpdateDto();
+        List<PersonFaceUpdateDTO> personFaces = new ArrayList<>();
+        PersonFaceUpdateDTO personFaceUpdateDto = new PersonFaceUpdateDTO();
 
         personFaceUpdateDto.setUserId(photoDTO.getUserId());
         personFaceUpdateDto.setFaceImage(photo.bytes());

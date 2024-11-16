@@ -23,9 +23,4 @@ public class CommandResultData {
 
     @JsonProperty("fail_messages")
     private List<String> failMessages;
-
-    @JsonIgnore
-    public boolean isPossibleInternalOrDeviceBusyError() {
-        return statusCode == 403 || statusCode == 503;
-    }
 }

@@ -33,8 +33,6 @@ public class MiddlewareEngine {
     public void addDeviceWorker(String token, long deviceId) {
         Middleware middleware;
 
-        System.out.println(token + ' ' + deviceId);
-
         try {
             middleware = dao.findMiddlewareByToken(token);
         } catch (Exception e) {

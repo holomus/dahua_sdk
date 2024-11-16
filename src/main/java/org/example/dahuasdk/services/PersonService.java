@@ -3,19 +3,23 @@ package org.example.dahuasdk.services;
 import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import jakarta.persistence.TemporalType;
 import lombok.RequiredArgsConstructor;
 import org.example.dahuasdk.client.vhr.entity.load.PersonDTO;
-import org.example.dahuasdk.client.vhr.entity.load.PersonFaceUpdateDto;
+import org.example.dahuasdk.client.vhr.entity.load.PersonFaceUpdateDTO;
+import org.example.dahuasdk.core.CommandExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.lang.Math.min;
 
 @Service
 @RequiredArgsConstructor
 
 public class PersonService {
+    private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     final private NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
 
     private List<Integer> getFailCodes(NetSDKLib.FAIL_CODE[] failCodes) {
@@ -28,12 +32,11 @@ public class PersonService {
         return result;
     }
 
-
     public List<Integer> savePerson(
             List<PersonDTO> personInsertInfos,
             NetSDKLib.LLong loginHandle
     ) throws Exception {
-        int emtype = NetSDKLib.NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_INSERT;
+        int commandType = NetSDKLib.NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_INSERT;
         int nMaxNum = personInsertInfos.size();
         NetSDKLib.NET_ACCESS_USER_INFO[] persons = new NetSDKLib.NET_ACCESS_USER_INFO[nMaxNum];
 
@@ -45,8 +48,9 @@ public class PersonService {
 
             System.arraycopy(personInsertInfo.getUserId().getBytes(), 0, personInfo.szUserID, 0,
                     personInsertInfo.getUserId().getBytes().length);
+
             System.arraycopy(personInsertInfo.getName().getBytes(), 0, personInfo.szName, 0,
-                    personInsertInfo.getName().getBytes().length);
+                    min(personInsertInfo.getName().getBytes().length, 32));
 
             personInfo.emUserType = personInsertInfo.getUserType();
             personInfo.nUserStatus = personInsertInfo.getUserStatus();
@@ -103,16 +107,17 @@ public class PersonService {
 
         boolean result = netsdk.CLIENT_OperateAccessUserService(
                 loginHandle,
-                emtype,
+                commandType,
                 inParam.getPointer(),
                 outParam.getPointer(),
                 3000
         );
 
         if (result) {
-            System.out.println("users added successfully.");
+            log.info("users added successfully.");
             ToolKits.GetPointerDataToStructArr(outParam.pFailCode, failCodes);
         } else {
+            log.error("users added failed");
             throw new Exception("users added failed");
         }
 
@@ -152,8 +157,6 @@ public class PersonService {
         stIn.write();
         stOut.write();
 
-        System.out.println("(removePerson) loginHandle = " + loginHandle);
-
         boolean result = netsdk.CLIENT_OperateAccessUserService(
                 loginHandle,
                 emtype,
@@ -165,6 +168,7 @@ public class PersonService {
         if (result) {
             ToolKits.GetPointerDataToStructArr(stOut.pFailCode, failCodes);
         } else {
+            log.error("Failed to remove user. error_message = " + ToolKits.getErrorCodeShow());
             throw new Exception("Failed to remove user. error_message = " + ToolKits.getErrorCodeShow());
         }
 
@@ -172,11 +176,11 @@ public class PersonService {
     }
 
     public List<Integer> insertPersonFace(
-            List<PersonFaceUpdateDto> personFaceUpdateDtos,
+            List<PersonFaceUpdateDTO> personFaceUpdateDtos,
             NetSDKLib.LLong loginHandle,
             int emtype
     ) throws Exception {
-        PersonFaceUpdateDto personFaceDto;
+        PersonFaceUpdateDTO personFaceDto;
         int nMaxNum = personFaceUpdateDtos.size();
 
         NetSDKLib.NET_ACCESS_FACE_INFO[] faceInfos = new NetSDKLib.NET_ACCESS_FACE_INFO[nMaxNum];
@@ -196,7 +200,7 @@ public class PersonService {
                     userId.getBytes(),
                     0,
                     faceInfo.szUserID,
-                    0, Math.min(userId.length(), faceInfo.szUserID.length)
+                    0, min(userId.length(), faceInfo.szUserID.length)
             );
 
             for (int j = 0; j < nFacePhoto; j++) {
@@ -258,11 +262,11 @@ public class PersonService {
         ToolKits.GetPointerDataToStructArr(faceInsertOut.pFailCode, failCodes);
 
         if (!ret) {
-            System.err.println("Add face failed: " + ToolKits.getErrorCodeShow());
+            log.error("Add face failed: {}", ToolKits.getErrorCodeShow());
             throw new Exception("Add face failed. Message = " + ToolKits.getErrorCodeShow());
         }
 
-        System.out.println("Add face succeeded");
+        log.info("Add face succeeded");
 
         return getFailCodes(failCodes);
     }
@@ -309,11 +313,11 @@ public class PersonService {
         );
 
         if (!ret) {
-            System.out.println("Remove face failed: " + ToolKits.getErrorCodePrint());
+            log.error("Remove face failed: {}", ToolKits.getErrorCodePrint());
 
             return false;
         } else {
-            System.out.println("Remove face succeeded");
+            log.info("Remove face succeeded");
             return true;
         }
     }
