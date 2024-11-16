@@ -5,7 +5,7 @@ import com.netsdk.lib.ToolKits;
 import com.sun.jna.Pointer;
 import lombok.RequiredArgsConstructor;
 import org.example.dahuasdk.dto.EventDTO;
-import org.example.dahuasdk.handlermanagers.EventListenerHandleManager;
+import org.example.dahuasdk.handlemanagers.EventListenerHandleManager;
 import org.example.dahuasdk.services.EventProcessorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

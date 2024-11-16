@@ -4,21 +4,22 @@ package org.example.dahuasdk.schedule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.config.VhrProperties;
 import org.example.dahuasdk.dao.AppDAO;
-import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
-import org.example.dahuasdk.services.DeviceConnectionInfoService;
+import org.example.dahuasdk.handlemanagers.DeviceLoginHandleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public class ApplicationScheduler {
     private final VhrProperties vhrProperties;
     private final VHRClient vhrClient;
     private ScheduledExecutorService scheduledExecutorService;
-    private final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
+    private final DeviceLoginHandleManager deviceConnectionInfoService;
 
     @PostConstruct
     public void schedule() {
@@ -73,14 +74,11 @@ public class ApplicationScheduler {
     private DeviceStatuses prepareDeviceStatuses(List<Device> deviceStatuses, Middleware middleware) {
         List<Device> devices = dao.findAllDevicesByMiddlewareId(middleware.getId());
         DeviceStatuses devicesInfo = new DeviceStatuses();
-        ConcurrentHashMap<String, DeviceConnectionDTO> deviceConnectionInfo = deviceConnectionInfoService.getData();
 
         for (Device device : devices) {
-            devicesInfo.addDeviceInfo(device.getVhrDeviceId(),
-                    deviceConnectionInfo.containsKey(
-                            device.getDeviceId())
-                            ? deviceConnectionInfo.get(device.getDeviceId()).getStatus()
-                            : "U");
+            var deviceConnectionInfo = deviceConnectionInfoService.get(device.getDeviceId());
+            String deviceStatus = deviceConnectionInfo != null ? deviceConnectionInfo.getStatus() : "U";
+            devicesInfo.addDeviceInfo(device.getVhrDeviceId(), deviceStatus);
         }
 
         return devicesInfo;

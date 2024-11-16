@@ -16,7 +16,7 @@ import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
 import org.example.dahuasdk.services.AppService;
-import org.example.dahuasdk.services.DeviceConnectionInfoService;
+import org.example.dahuasdk.handlemanagers.DeviceLoginHandleManager;
 import org.example.dahuasdk.services.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,8 @@ import java.util.concurrent.*;
 @Scope("prototype")
 
 public class CommandExecutor {
-    private final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
+    private final DeviceLoginHandleManager deviceConnectionInfoService;
     private final AppService appService;
     private final VHRClient vhrClient;
     private final ObjectMapper objectMapper;
@@ -92,7 +92,7 @@ public class CommandExecutor {
                     failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE);
                     break;
                 case "dahua:person:remove_photo":
-                    failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_UPDATE);
+                    failcodes = setPhoto(command.getCommandBody(), NetSDKLib.NET_EM_ACCESS_CTL_FACE_SERVICE.NET_EM_ACCESS_CTL_FACE_SERVICE_REMOVE);
                     break;
                 default:
                     log.error("Invalid command code mode: {}", command.getCommandCode());

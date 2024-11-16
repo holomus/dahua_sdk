@@ -1,4 +1,4 @@
-package org.example.dahuasdk.handlermanagers;
+package org.example.dahuasdk.handlemanagers;
 
 import com.netsdk.lib.NetSDKLib;
 import lombok.RequiredArgsConstructor;
