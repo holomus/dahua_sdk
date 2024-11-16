@@ -12,14 +12,13 @@ import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -28,7 +27,7 @@ public class AutoRegisterService {
     static final private NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
     private final AppService appService;
     private final AppDAO dao;
-    private final EventReceiverService eventReceiver;
+    private final EventListenerService eventReceiver;
     private final EventLoaderService eventLoader;
 
     private class DisConnect implements NetSDKLib.fDisConnect {
@@ -55,6 +54,65 @@ public class AutoRegisterService {
     }
 
     public class ServiceCB implements NetSDKLib.fServiceCallBack {
+        private record DeviceWithHandle(Device device, LocalDateTime lastOnlineTime, NetSDKLib.LLong loginHandle) {}
+
+        private void handleSerialReturnEvent(String pIp, int wPort, String deviceId) {
+            CompletableFuture.supplyAsync(() -> {
+                Device device = appService.findDeviceByDeviceId(deviceId);
+
+                if (device == null) {
+                    throw new IllegalArgumentException("Device not found for deviceId: " + deviceId);
+                }
+
+                var lastOnlineTime = device.getLastOnlineTime();
+
+                log.info("Connecting to device: {}", deviceId);
+
+                NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
+                        device.getLogin(),
+                        device.getPassword(),
+                        device.getDeviceId(),
+                        pIp.trim(),
+                        wPort
+                );
+
+                if (loginHandle.longValue() == 0) {
+                    throw new IllegalStateException("Failed to login to device: " + deviceId);
+                }
+
+                log.info("Login successful for deviceId: {} (IP: {}, Port: {})", deviceId, pIp.trim(), wPort);
+
+                return new DeviceWithHandle(device, device.getLastOnlineTime(), loginHandle);
+            }).thenApply(deviceWithHandle -> {
+                // Update device connection info
+                DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
+                deviceInfo.setLoginHandle(deviceWithHandle.loginHandle);
+                deviceInfo.setStatus("O");
+
+                // TODO: Safely update the shared map
+                deviceConnectionInfo.put(deviceId, deviceInfo);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                eventReceiver.eventListeningStart(netsdk, deviceWithHandle.loginHandle, deviceId);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                deviceWithHandle.device.setLastOnlineTime(LocalDateTime.now());
+                dao.saveDevice(deviceWithHandle.device);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                eventLoader.loadAccessRecords(netsdk, deviceWithHandle.loginHandle, deviceId, deviceWithHandle.lastOnlineTime, LocalDateTime.now());
+
+                return deviceWithHandle;
+            }).exceptionally(ex -> {
+                log.error("Error during device handling for deviceId: {}", deviceId, ex);
+                return null;
+            });
+        }
+
+
         @Override
         public int invoke(NetSDKLib.LLong lHandle, final String pIp, final int wPort,
                           int lCommand, Pointer pParam, int dwParamLen,
@@ -75,55 +133,7 @@ public class AutoRegisterService {
                     break;
                 }
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_SERIAL_RETURN: {
-                    String finalDeviceId = deviceId;
-
-                    Device device = appService.findDeviceByDeviceId(finalDeviceId);
-
-                    var lastOnlineTime = device.getLastOnlineTime();
-
-                    NetSDKLib.LLong loginHandle = DahuaSdkApplication.autoRegisterService.login(
-                            device.getLogin(),
-                            device.getPassword(),
-                            device.getDeviceId(),
-                            pIp.trim(),
-                            wPort
-                    );
-
-                    System.out.println("ip = " + pIp.trim() + " port + " + wPort + " device_id = " + finalDeviceId + "loginhandle = " + loginHandle);
-
-                    DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
-                    deviceInfo.setLoginHandle(loginHandle);
-
-                    deviceInfo.setStatus("O");
-                    device.setLastOnlineTime(LocalDateTime.now());
-                    dao.saveDevice(device);
-
-                    deviceConnectionInfo.put(finalDeviceId, deviceInfo);
-
-                    new SwingWorker<Boolean, String>() {
-                        @Override
-                        protected Boolean doInBackground() {
-
-                            System.out.println("Connected");
-
-                            NetSDKLib.LLong eventListenHandle = eventReceiver.eventListeningStart(netsdk, loginHandle, finalDeviceId);
-
-                            eventLoader.loadAccessRecords(netsdk, loginHandle, finalDeviceId, lastOnlineTime, LocalDateTime.now());
-
-                            return true;
-                        }
-
-                        @Override
-                        protected void done() {
-                            try {
-                                if (get()) {
-                                    System.out.println("(done) Connected");
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }.execute();
+                    handleSerialReturnEvent(pIp, wPort, deviceId);
                     break;
                 }
                 default:
