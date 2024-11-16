@@ -5,55 +5,55 @@ import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.sun.jna.Pointer;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AutoRegisterService {
-    static final private NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
+    private static final Logger log = LoggerFactory.getLogger(AutoRegisterService.class);
     private final AppService appService;
     private final AppDAO dao;
     private final EventListenerService eventReceiver;
     private final EventLoaderService eventLoader;
 
-    private class DisConnect implements NetSDKLib.fDisConnect {
+    private static class DisConnect implements NetSDKLib.fDisConnect {
         public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
-            System.out.printf("Device[%s] Port[%d] LoginHandle[%d], DisConnect!\n", pchDVRIP, nDVRPort, m_hLoginHandle.longValue());
+            log.info("Device[{}] Port[{}] LoginHandle[{}], DisConnect!", pchDVRIP, nDVRPort, m_hLoginHandle.longValue());
 
-            for (Map.Entry<String, DeviceConnectionDTO> entry : deviceConnectionInfo.entrySet()) {
+            for (Map.Entry<String, DeviceConnectionDTO> entry : deviceConnectionInfoService.getData().entrySet()) {
                 String key = entry.getKey();
                 DeviceConnectionDTO value = entry.getValue();
 
                 if (Objects.equals(m_hLoginHandle, value.getLoginHandle())) {
                     value.setStatus("F");
-                    deviceConnectionInfo.put(key, value);
+                    deviceConnectionInfoService.put(key, value);
                     break;
                 }
             }
         }
     }
-
     private static class HaveReConnect implements NetSDKLib.fHaveReConnect {
         public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
-            System.out.printf("ReConnect Device[%s] Port[%d]\n", pchDVRIP, nDVRPort);
+            log.info("ReConnect Device[{}] Port[{}]", pchDVRIP, nDVRPort);
         }
     }
 
-    public class ServiceCB implements NetSDKLib.fServiceCallBack {
+    private class ServiceCB implements NetSDKLib.fServiceCallBack {
         private record DeviceWithHandle(Device device, LocalDateTime lastOnlineTime, NetSDKLib.LLong loginHandle) {}
 
         private void handleSerialReturnEvent(String pIp, int wPort, String deviceId) {
@@ -124,12 +124,12 @@ public class AutoRegisterService {
             try {
                 deviceId = new String(buffer, "GBK").trim();
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
 
             switch (lCommand) {
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_DISCONNECT: {
-                    System.err.println("disconnected");
+                    log.error("disconnected");
                     break;
                 }
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_SERIAL_RETURN: {
@@ -145,14 +145,13 @@ public class AutoRegisterService {
     }
 
     // ---------------------  variables --------------------- //
+    private final NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
     public NetSDKLib.LLong serverHanle;
-    public static NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();
-    public HashMap<String, DeviceConnectionDTO> deviceConnectionInfo = new HashMap<>();
-    private static boolean bInit = false;
-    private static boolean bLogopen = false;
+    public NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();
     public final ServiceCB callback = new ServiceCB();
-    public final DisConnect disConnect = new DisConnect();
-    public final HaveReConnect haveReConnect = new HaveReConnect();
+    private final DisConnect disConnect = new DisConnect();
+    private final HaveReConnect haveReConnect = new HaveReConnect();
+    private static  final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
 
     public NetSDKLib.LLong login(
             String m_strUser,
@@ -175,41 +174,31 @@ public class AutoRegisterService {
         NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY pstOutParam = new NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY();
         pstOutParam.stuDeviceInfo = m_stDeviceInfo;
 
-        NetSDKLib.LLong m_hLoginHandle = LoginModule.netsdk.CLIENT_LoginWithHighLevelSecurity(pstInParam, pstOutParam);
-        return m_hLoginHandle;
+        return LoginModule.netsdk.CLIENT_LoginWithHighLevelSecurity(pstInParam, pstOutParam);
     }
 
-    public static void initSDK() {
-        boolean result = NetSDKLib.NETSDK_INSTANCE.CLIENT_Init(null, null);
-        if (!result) {
-            System.out.println("SDK initialization failed");
-        } else {
-            System.out.println("SDK initialized successfully");
-        }
-    }
-
-    public static void init(NetSDKLib.fDisConnect disConnect, NetSDKLib.fHaveReConnect haveReConnect) {
-        bInit = netsdk.CLIENT_Init(disConnect, null);
+    public void initSDK() {
+        boolean bInit = netsdk.CLIENT_Init(disConnect, null);
         if (!bInit) {
-            System.out.println("Initialize SDK failed");
+            log.error("Initialize SDK failed");
             return;
         }
 
         NetSDKLib.LOG_SET_PRINT_INFO setLog = new NetSDKLib.LOG_SET_PRINT_INFO();
         File path = new File("./sdklog/");
         if (!path.exists()) {
-            path.mkdir();
+            boolean mkdir = path.mkdir();
         }
         String logPath = path.getAbsoluteFile().getParent() + "\\sdklog\\" + ToolKits.getDate() + ".log";
 
         setLog.nPrintStrategy = 0;
         setLog.bSetFilePath = 1;
         System.arraycopy(logPath.getBytes(), 0, setLog.szLogFilePath, 0, logPath.getBytes().length);
-        System.out.println(logPath);
         setLog.bSetPrintStrategy = 1;
-        bLogopen = netsdk.CLIENT_LogOpen(setLog);
-        if (!bLogopen) {
-            System.err.println("Failed to open NetSDK log");
+        boolean isLogOpen = netsdk.CLIENT_LogOpen(setLog);
+
+        if (!isLogOpen) {
+            log.error("Failed to open NetSDK log");
         }
 
         netsdk.CLIENT_SetAutoReconnect(haveReConnect, null);
@@ -227,7 +216,7 @@ public class AutoRegisterService {
 
     public void cleanSdk() {
         netsdk.CLIENT_Cleanup();
-        System.out.println("SDK resources cleaned up.");
+        log.info("SDK resources cleaned up.");
     }
 
     public void logout(NetSDKLib.LLong m_loginHandle) {
@@ -236,13 +225,13 @@ public class AutoRegisterService {
         }
     }
 
-    public void startServer(String address, int port, NetSDKLib.fServiceCallBack callback) {
+    public void startServer(String address, int port) {
         serverHanle = netsdk.CLIENT_ListenServer(address, port, 1000, callback, null);
 
         if (0 == serverHanle.longValue()) {
-            System.err.println("Failed to start server." + ToolKits.getErrorCodePrint());
+            log.error("Failed to start server. {}",  ToolKits.getErrorCodePrint());
         } else {
-            System.out.printf("Start server, [Server address %s][Server port %d]\n", address, port);
+            log.info("Start server, [Server address {}][Server port {}]\n", address, port);
         }
         serverHanle.longValue();
     }
@@ -253,7 +242,7 @@ public class AutoRegisterService {
         if (serverHanle.longValue() != 0) {
             bRet = LoginModule.netsdk.CLIENT_StopListenServer(serverHanle);
             serverHanle.setValue(0);
-            System.out.println("Stop server!");
+            log.info("Stop server!");
         }
 
         return bRet;

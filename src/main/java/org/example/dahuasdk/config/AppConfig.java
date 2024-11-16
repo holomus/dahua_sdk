@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class AppConfig {
-
     private static OkHttpClient.Builder okHttpClientBuilder(int connectTimeout, int readTimeout, int writeTimeout) {
         Dispatcher dispatcher = new Dispatcher();
         dispatcher.setMaxRequests(500);

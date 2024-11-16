@@ -5,21 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.*;
-import org.example.dahuasdk.DahuaSdkApplication;
-import org.example.dahuasdk.client.dahua.DahuaClient;
 import org.example.dahuasdk.client.vhr.VHRClient;
 import org.example.dahuasdk.config.VhrProperties;
 import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
 import org.example.dahuasdk.entity.Middleware;
+import org.example.dahuasdk.services.DeviceConnectionInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +30,8 @@ public class ApplicationScheduler {
     private final AppDAO dao;
     private final VhrProperties vhrProperties;
     private final VHRClient vhrClient;
-    private final DahuaClient dahuaClient;
     private ScheduledExecutorService scheduledExecutorService;
+    private final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
 
     @PostConstruct
     public void schedule() {
@@ -58,9 +57,6 @@ public class ApplicationScheduler {
             List<Middleware> middlewares = dao.findAllMiddleware();
             middlewares.forEach(middleware -> {
                 List<Device> deviceInfos = dao.findAllDevicesByMiddlewareId(middleware.getId());
-
-                System.out.println("sendHealthCheck and sendDeviceStatuses working ...");
-
                 vhrClient.sendHealthCheck(middleware);
                 sendDeviceStatuses(deviceInfos, middleware);
             });
@@ -77,7 +73,7 @@ public class ApplicationScheduler {
     private DeviceStatuses prepareDeviceStatuses(List<Device> deviceStatuses, Middleware middleware) {
         List<Device> devices = dao.findAllDevicesByMiddlewareId(middleware.getId());
         DeviceStatuses devicesInfo = new DeviceStatuses();
-        HashMap<String, DeviceConnectionDTO> deviceConnectionInfo = DahuaSdkApplication.autoRegisterService.deviceConnectionInfo;
+        ConcurrentHashMap<String, DeviceConnectionDTO> deviceConnectionInfo = deviceConnectionInfoService.getData();
 
         for (Device device : devices) {
             devicesInfo.addDeviceInfo(device.getVhrDeviceId(),
@@ -88,14 +84,6 @@ public class ApplicationScheduler {
         }
 
         return devicesInfo;
-    }
-
-    private String mapStatus(String status) {
-        return switch (status) {
-            case "online" -> "O";
-            case "offline" -> "F";
-            default -> "";
-        };
     }
 
     private record DeviceStatus(@JsonProperty("device_id") long deviceId, @JsonProperty("status") String status) {

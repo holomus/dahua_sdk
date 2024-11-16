@@ -7,29 +7,24 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.beans.factory.annotation.Value;
 
 @SpringBootApplication
 @EnableScheduling
 @RequiredArgsConstructor
 
 public class DahuaSdkApplication {
-    public static AutoRegisterService autoRegisterService;
+    @Value("${dahua.server.address}")
+    private String serverAddress;
+    @Value("${dahua.server.port}")
+    private int serverPort;
 
-    @Autowired
-    public void setAutoRegisterService(AutoRegisterService autoRegisterService) {
-        DahuaSdkApplication.autoRegisterService = autoRegisterService;
-    }
+    private final AutoRegisterService autoRegisterService;
 
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(DahuaSdkApplication.class, args);
-
-        autoRegisterService = context.getBean(AutoRegisterService.class);
-
-        autoRegisterService.init(autoRegisterService.disConnect, autoRegisterService.haveReConnect);
-        autoRegisterService.startServer(
-                "localhost",
-                9500,
-                autoRegisterService.callback
-        );
+        DahuaSdkApplication application = context.getBean(DahuaSdkApplication.class);
+        application.autoRegisterService.initSDK();
+        application.autoRegisterService.startServer(application.serverAddress, application.serverPort);
     }
 }
