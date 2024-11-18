@@ -5,50 +5,96 @@ import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.sun.jna.Pointer;
 import lombok.RequiredArgsConstructor;
-import org.example.dahuasdk.DahuaSdkApplication;
 import org.example.dahuasdk.dao.AppDAO;
 import org.example.dahuasdk.dto.DeviceConnectionDTO;
 import org.example.dahuasdk.entity.Device;
+import org.example.dahuasdk.handlemanagers.DeviceLoginHandleManager;
+import org.example.dahuasdk.sdkcallbacks.DeviceDisconnectCallback;
+import org.example.dahuasdk.sdkcallbacks.DeviceReconnectCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-
 public class AutoRegisterService {
     private static final Logger log = LoggerFactory.getLogger(AutoRegisterService.class);
     private final AppService appService;
     private final AppDAO dao;
-    private static class DisConnect implements NetSDKLib.fDisConnect {
-        public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
-            log.info("Device[{}] Port[{}] LoginHandle[{}], DisConnect!", pchDVRIP, nDVRPort, m_hLoginHandle.longValue());
+    private final EventListenerService eventReceiver;
+    private final EventLoaderService eventLoader;
+    private final NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
+    public NetSDKLib.LLong serverHandle;
+    public NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();
+    public final ServiceCB callback = new ServiceCB();
+    private final DeviceDisconnectCallback disConnect;
+    private final DeviceReconnectCallback haveReConnect;
+    private final DeviceLoginHandleManager deviceConnectionInfoService;
 
-            for (Map.Entry<String, DeviceConnectionDTO> entry : deviceConnectionInfoService.getData().entrySet()) {
-                String key = entry.getKey();
-                DeviceConnectionDTO value = entry.getValue();
-
-                if (Objects.equals(m_hLoginHandle, value.getLoginHandle())) {
-                    value.setStatus("F");
-                    deviceConnectionInfoService.put(key, value);
-                    break;
-                }
-            }
-        }
-    }
-    private static class HaveReConnect implements NetSDKLib.fHaveReConnect {
-        public void invoke(NetSDKLib.LLong m_hLoginHandle, String pchDVRIP, int nDVRPort, Pointer dwUser) {
-            log.info("ReConnect Device[{}] Port[{}]", pchDVRIP, nDVRPort);
-        }
-    }
     private class ServiceCB implements NetSDKLib.fServiceCallBack {
+        private record DeviceWithHandle(Device device, LocalDateTime lastOnlineTime, NetSDKLib.LLong loginHandle) {}
+
+        private void handleSerialReturnEvent(String pIp, int wPort, String deviceId) {
+            CompletableFuture.supplyAsync(() -> {
+                Device device = appService.findDeviceByDeviceId(deviceId);
+
+                if (device == null) {
+                    throw new IllegalArgumentException("Device not found for deviceId: " + deviceId);
+                }
+
+                var lastOnlineTime = device.getLastOnlineTime();
+
+                log.info("Connecting to device: {}", deviceId);
+
+                NetSDKLib.LLong loginHandle = login(
+                        device.getLogin(),
+                        device.getPassword(),
+                        device.getDeviceId(),
+                        pIp.trim(),
+                        wPort
+                );
+
+                if (loginHandle.longValue() == 0) {
+                    throw new IllegalStateException("Failed to login to device: " + deviceId);
+                }
+
+                log.info("Login successful for deviceId: {} (IP: {}, Port: {})", deviceId, pIp.trim(), wPort);
+
+                return new DeviceWithHandle(device, device.getLastOnlineTime(), loginHandle);
+            }).thenApply(deviceWithHandle -> {
+                // Update device connection info
+                DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
+                deviceInfo.setLoginHandle(deviceWithHandle.loginHandle);
+                deviceInfo.setStatus("O");
+
+                deviceConnectionInfoService.put(deviceId, deviceInfo);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                eventReceiver.eventListeningStart(netsdk, deviceWithHandle.loginHandle, deviceId);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                deviceWithHandle.device.setLastOnlineTime(LocalDateTime.now());
+                dao.saveDevice(deviceWithHandle.device);
+
+                return deviceWithHandle;
+            }).thenApply(deviceWithHandle -> {
+                eventLoader.loadAccessRecords(netsdk, deviceWithHandle.loginHandle, deviceId, deviceWithHandle.lastOnlineTime, LocalDateTime.now());
+
+                return deviceWithHandle;
+            }).exceptionally(ex -> {
+                log.error("Error during device handling for deviceId: {}", deviceId, ex);
+                return null;
+            });
+        }
+
+
         @Override
         public int invoke(NetSDKLib.LLong lHandle, final String pIp, final int wPort,
                           int lCommand, Pointer pParam, int dwParamLen,
@@ -69,42 +115,7 @@ public class AutoRegisterService {
                     break;
                 }
                 case NetSDKLib.EM_LISTEN_TYPE.NET_DVR_SERIAL_RETURN: {
-                    String finalDeviceId = deviceId;
-
-                    new SwingWorker<Boolean, String>() {
-                        @Override
-                        protected Boolean doInBackground() {
-                            Device device = appService.findDeviceByDeviceId(finalDeviceId);
-
-                            NetSDKLib.LLong loginHandle = login(
-                                    device.getLogin(),
-                                    device.getPassword(),
-                                    device.getDeviceId(),
-                                    pIp.trim(),
-                                    wPort
-                            );
-
-                            DeviceConnectionDTO deviceInfo = new DeviceConnectionDTO();
-                            deviceInfo.setLoginHandle(loginHandle);
-
-                            if (loginHandle.longValue() != 0) {
-                                log.info("Login to device successfully. DeviceId[{}], Ip[{}], Port[{}], LoginHandel[{}] ", finalDeviceId, pIp, wPort, loginHandle);
-
-                                deviceInfo.setStatus("O");
-                                device.setLastOnlineTime(new Date());
-                                dao.saveDevice(device);
-
-                                deviceConnectionInfoService.put(finalDeviceId, deviceInfo);
-                                return true;
-                            }
-
-                            log.error("Login to device failed. DeviceId[{}], Ip[{}], Port[{}], LoginHandel[{}] ", finalDeviceId, pIp, wPort, loginHandle);
-
-                            deviceInfo.setStatus("F");
-                            deviceConnectionInfoService.put(finalDeviceId, deviceInfo);
-                            return false;
-                        }
-                    }.execute();
+                    handleSerialReturnEvent(pIp, wPort, deviceId);
                     break;
                 }
                 default:
@@ -114,15 +125,6 @@ public class AutoRegisterService {
             return 0;
         }
     }
-
-    // ---------------------  variables --------------------- //
-    private final NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
-    public NetSDKLib.LLong serverHanle;
-    public NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();
-    public final ServiceCB callback = new ServiceCB();
-    private final DisConnect disConnect = new DisConnect();
-    private final HaveReConnect haveReConnect = new HaveReConnect();
-    private static  final DeviceConnectionInfoService deviceConnectionInfoService = DeviceConnectionInfoService.getInstance();
 
     public NetSDKLib.LLong login(
             String m_strUser,
@@ -145,7 +147,7 @@ public class AutoRegisterService {
         NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY pstOutParam = new NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY();
         pstOutParam.stuDeviceInfo = m_stDeviceInfo;
 
-        return LoginModule.netsdk.CLIENT_LoginWithHighLevelSecurity(pstInParam, pstOutParam);
+        return netsdk.CLIENT_LoginWithHighLevelSecurity(pstInParam, pstOutParam);
     }
 
     public void initSDK() {
@@ -197,22 +199,22 @@ public class AutoRegisterService {
     }
 
     public void startServer(String address, int port) {
-        serverHanle = netsdk.CLIENT_ListenServer(address, port, 1000, callback, null);
+        serverHandle = netsdk.CLIENT_ListenServer(address, port, 1000, callback, null);
 
-        if (0 == serverHanle.longValue()) {
+        if (0 == serverHandle.longValue()) {
             log.error("Failed to start server. {}",  ToolKits.getErrorCodePrint());
         } else {
             log.info("Start server, [Server address {}][Server port {}]\n", address, port);
         }
-        serverHanle.longValue();
+        serverHandle.longValue();
     }
 
     public boolean stopServer() {
         boolean bRet = false;
 
-        if (serverHanle.longValue() != 0) {
-            bRet = LoginModule.netsdk.CLIENT_StopListenServer(serverHanle);
-            serverHanle.setValue(0);
+        if (serverHandle.longValue() != 0) {
+            bRet = LoginModule.netsdk.CLIENT_StopListenServer(serverHandle);
+            serverHandle.setValue(0);
             log.info("Stop server!");
         }
 
